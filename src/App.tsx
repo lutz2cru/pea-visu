@@ -8,6 +8,7 @@ import { PositionsTable } from './components/PositionsTable';
 import { FileImportModal } from './components/FileImportModal';
 import { SettingsModal } from './components/SettingsModal';
 import { SimulatorView } from './components/simulation/SimulatorView';
+import { DcaPlanCard } from './components/dca/DcaPlanCard';
 import { INITIAL_PORTFOLIO_DATA } from './data/defaultData';
 import { PortfolioData, BenchmarkChoice, InvestmentMode } from './types/portfolio';
 import {
@@ -20,6 +21,9 @@ import { ShieldCheck, BarChart3, Rocket, Sparkles } from 'lucide-react';
 export const App: React.FC = () => {
   // Navigation par onglets
   const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'SIMULATOR'>('DASHBOARD');
+
+  // Paramètres simulateur
+  const [simulatorMonthlyAmount, setSimulatorMonthlyAmount] = useState<number>(100);
 
   // État du portefeuille avec persistance LocalStorage
   const [portfolio, setPortfolio] = useState<PortfolioData>(() => {
@@ -60,6 +64,12 @@ export const App: React.FC = () => {
       ...prev,
       positions: prev.positions.map(p => p.id === id ? { ...p, purchaseYear: year } : p)
     }));
+  };
+
+  // Basculer vers le simulateur avec un montant spécifique
+  const handleGoToSimulatorWithAmount = (amount: number) => {
+    setSimulatorMonthlyAmount(amount);
+    setActiveTab('SIMULATOR');
   };
 
   // Réinitialiser les données
@@ -150,14 +160,17 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            {/* 1. Cartes de métriques clés */}
+            {/* 1. Carte Plan DCA 100€/mois WPEA & Rappel Téléphone */}
+            <DcaPlanCard onGoToSimulator={handleGoToSimulatorWithAmount} />
+
+            {/* 2. Cartes de métriques clés */}
             <MetricCards
               summary={summary}
               startDate={startDate}
               includeDividends={includeDividends}
             />
 
-            {/* 2. Graphiques Rendement Annuel + Allocation */}
+            {/* 3. Graphiques Rendement Annuel + Allocation */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
                 <YearlyPerformanceChart
@@ -173,14 +186,14 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            {/* 3. Courbe d'enrichissement et d'évolution dans le temps */}
+            {/* 4. Courbe d'enrichissement et d'évolution dans le temps */}
             <WealthEvolutionChart
               timelineData={timelineData}
               investmentMode={investmentMode}
               onModeChange={setInvestmentMode}
             />
 
-            {/* 4. Tableau complet des 6 lignes */}
+            {/* 5. Tableau complet des 6 lignes */}
             <PositionsTable
               positions={portfolio.positions}
               onUpdatePurchaseYear={handleUpdatePurchaseYear}
@@ -191,6 +204,7 @@ export const App: React.FC = () => {
           <SimulatorView
             currentValuation={summary.totalValuation}
             currentAnnualizedReturn={summary.annualizedReturn}
+            initialMonthlyContribution={simulatorMonthlyAmount}
           />
         )}
 

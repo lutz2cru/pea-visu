@@ -14,16 +14,18 @@ import { Info, Sparkles, BookOpen, ShieldCheck, ArrowRight } from 'lucide-react'
 interface SimulatorViewProps {
   currentValuation: number;
   currentAnnualizedReturn: number;
+  initialMonthlyContribution?: number;
 }
 
 export const SimulatorView: React.FC<SimulatorViewProps> = ({
   currentValuation,
-  currentAnnualizedReturn
+  currentAnnualizedReturn,
+  initialMonthlyContribution = 100
 }) => {
   // Paramètres initiaux basés sur les données réelles de Matthias
   const [params, setParams] = useState<SimulationParameters>({
     initialCapital: currentValuation || 2453.80,
-    monthlyContribution: 200, // 200 € / mois par défaut
+    monthlyContribution: initialMonthlyContribution, // 100 € / mois par défaut
     expectedReturnRate: Math.round((currentAnnualizedReturn * 100) * 100) / 100 || 7.55,
     durationYears: 30, // Jusqu'en 2056
     inflationRate: 2.0,
