@@ -1,0 +1,19 @@
+# Dépendances
+node_modules/
+
+# Build de production
+dist/
+dist-ssr/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Documents personnels bancaires bruts (sécurité)
+avis/*
+data/*.csv
