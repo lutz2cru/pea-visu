@@ -12,6 +12,7 @@ export interface PortfolioSummary {
   durationInYears: number;
   etfWeight: number;
   stockWeight: number;
+  positionsCount: number;
 }
 
 export function computePortfolioSummary(
@@ -64,7 +65,8 @@ export function computePortfolioSummary(
     totalReturnPercentWithDividends,
     durationInYears: Math.round(durationInYears * 10) / 10,
     etfWeight: totalValuation > 0 ? etfVal / totalValuation : 0,
-    stockWeight: totalValuation > 0 ? stockVal / totalValuation : 0
+    stockWeight: totalValuation > 0 ? stockVal / totalValuation : 0,
+    positionsCount: positions.length
   };
 }
 

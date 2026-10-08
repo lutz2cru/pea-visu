@@ -12,7 +12,7 @@ export interface Position {
   weight: number;
   currency: string;
   assetType: 'ETF' | 'Action';
-  category: 'Indice US' | 'Marchés Émergents' | 'Industrie & Aéro' | 'Énergie' | 'Télécoms' | 'Finance';
+  category: 'Indice US' | 'Marchés Émergents' | 'Industrie & Aéro' | 'Énergie' | 'Télécoms' | 'Finance' | string;
   purchaseYear: number;
   purchaseMonth?: number;
   dividendYieldEstimate: number; // in %
