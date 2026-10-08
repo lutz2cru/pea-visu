@@ -220,6 +220,7 @@ export const App: React.FC = () => {
         isOpen={isImportOpen}
         onClose={() => setIsImportOpen(false)}
         onImportSuccess={(newPort) => setPortfolio(newPort)}
+        currentPositions={portfolio.positions}
       />
 
       <SettingsModal

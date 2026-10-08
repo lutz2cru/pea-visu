@@ -22,7 +22,7 @@ export const PositionsTable: React.FC<PositionsTableProps> = ({
               <Table className="w-4 h-4" />
             </div>
             <h2 className="text-base font-bold text-white tracking-tight">
-              Détail des 6 Lignes du PEA
+              Détail des {positions.length} Lignes du PEA
             </h2>
           </div>
           <p className="text-xs text-slate-400 mt-1">

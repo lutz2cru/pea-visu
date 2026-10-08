@@ -31,7 +31,7 @@ export const MetricCards: React.FC<MetricCardsProps> = ({
         </div>
         <div className="mt-2 text-xs text-slate-400 flex items-center gap-1.5">
           <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Valorisation Fortuneo (6 lignes)</span>
+          <span>Valorisation Fortuneo ({summary.positionsCount} {summary.positionsCount > 1 ? 'lignes' : 'ligne'})</span>
         </div>
       </div>
 

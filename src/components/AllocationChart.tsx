@@ -49,7 +49,7 @@ export const AllocationChart: React.FC<AllocationChartProps> = ({ positions }) =
           </h2>
         </div>
         <p className="text-xs text-slate-400 mt-1">
-          Pondération des 6 lignes de votre PEA
+          Pondération des {positions.length} lignes de votre PEA
         </p>
       </div>
 
