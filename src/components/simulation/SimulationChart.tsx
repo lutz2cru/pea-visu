@@ -15,11 +15,15 @@ import { TrendingUp, Layers, GitCompare } from 'lucide-react';
 interface SimulationChartProps {
   timeline: SimulationYearData[];
   expectedRate: number;
+  adjustForInflation?: boolean;
+  inflationRate?: number;
 }
 
 export const SimulationChart: React.FC<SimulationChartProps> = ({
   timeline,
-  expectedRate
+  expectedRate,
+  adjustForInflation = false,
+  inflationRate = 2.0
 }) => {
   const [chartMode, setChartMode] = useState<'BREAKDOWN' | 'SCENARIOS'>('BREAKDOWN');
 
@@ -36,9 +40,16 @@ export const SimulationChart: React.FC<SimulationChartProps> = ({
             <h3 className="text-base font-bold text-white tracking-tight">
               Courbe des Intérêts Composés dans le Temps
             </h3>
+            {adjustForInflation && (
+              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono px-2 py-0.5 rounded-full border border-emerald-500/30">
+                Déflaté à {inflationRate}% / an
+              </span>
+            )}
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Visualisez l'effet boule de neige année par année jusqu'en {timeline[timeline.length - 1]?.calendarYear}
+            {adjustForInflation
+              ? `Projection exprimée en pouvoir d'achat réel (euros constants) jusqu'en ${timeline[timeline.length - 1]?.calendarYear}`
+              : `Visualisez l'effet boule de neige année par année jusqu'en ${timeline[timeline.length - 1]?.calendarYear}`}
           </p>
         </div>
 
@@ -110,11 +121,11 @@ export const SimulationChart: React.FC<SimulationChartProps> = ({
               }}
               formatter={(value: any, name: any) => {
                 const labels: Record<string, string> = {
-                  invested: 'Capital versé de votre poche',
-                  gains: 'Gains d\'intérêts composés',
-                  total: `Scénario Réaliste (${expectedRate}%)`,
-                  optimistic: `Scénario Optimiste (${(expectedRate + 2).toFixed(1)}%)`,
-                  pessimistic: `Scénario Prudent (${Math.max(1, expectedRate - 2).toFixed(1)}%)`
+                  invested: adjustForInflation ? 'Capital versé (pouvoir d\'achat)' : 'Capital versé de votre poche',
+                  gains: adjustForInflation ? 'Gains réels déflatés' : 'Gains d\'intérêts composés',
+                  total: adjustForInflation ? `Scénario Réaliste (${expectedRate}% - ${inflationRate}% infl.)` : `Scénario Réaliste (${expectedRate}%)`,
+                  optimistic: adjustForInflation ? `Optimiste (${(expectedRate + 2).toFixed(1)}% réel)` : `Scénario Optimiste (${(expectedRate + 2).toFixed(1)}%)`,
+                  pessimistic: adjustForInflation ? `Prudent (${Math.max(1, expectedRate - 2).toFixed(1)}% réel)` : `Scénario Prudent (${Math.max(1, expectedRate - 2).toFixed(1)}%)`
                 };
                 return [`${Number(value).toLocaleString('fr-FR')} €`, labels[name] || name];
               }}

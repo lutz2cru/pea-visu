@@ -33,9 +33,11 @@ export interface SimulationYearData {
 
 export interface GoalCalculationResult {
   targetAmount: number;
+  nominalTargetAmount?: number;
   targetYear: number;
   years: number;
   requiredMonthly: number;
   totalInvested: number;
   totalGains: number;
 }
+

@@ -5,16 +5,27 @@ import { Target, Sparkles, ArrowRight, PiggyBank, TrendingUp } from 'lucide-reac
 interface GoalCalculatorProps {
   initialCapital: number;
   expectedRate: number;
+  adjustForInflation?: boolean;
+  inflationRate?: number;
 }
 
 export const GoalCalculator: React.FC<GoalCalculatorProps> = ({
   initialCapital,
-  expectedRate
+  expectedRate,
+  adjustForInflation = false,
+  inflationRate = 2.0
 }) => {
   const [targetAmount, setTargetAmount] = useState<number>(100000);
   const [targetYears, setTargetYears] = useState<number>(20); // 2046
 
-  const result = calculateRequiredSavings(targetAmount, targetYears, initialCapital, expectedRate);
+  const result = calculateRequiredSavings(
+    targetAmount,
+    targetYears,
+    initialCapital,
+    expectedRate,
+    adjustForInflation,
+    inflationRate
+  );
 
   const presetGoals = [50000, 100000, 200000, 500000, 1000000];
   const presetYears = [10, 15, 20, 25, 30];
@@ -104,6 +115,11 @@ export const GoalCalculator: React.FC<GoalCalculatorProps> = ({
               <span>Gains générés par le marché :</span>
               <span className="font-mono">+{result.totalGains.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €</span>
             </div>
+            {adjustForInflation && result.nominalTargetAmount && (
+              <div className="pt-1 border-t border-slate-800/60 text-[10px] text-amber-300/90">
+                <span>Cible future brute avec {inflationRate}% d'inflation : <strong>{result.nominalTargetAmount.toLocaleString('fr-FR')} €</strong></span>
+              </div>
+            )}
           </div>
         </div>
 
