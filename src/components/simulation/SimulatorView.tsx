@@ -39,6 +39,8 @@ export const SimulatorView: React.FC<SimulatorViewProps> = ({
   const timeline = generateSimulationTimeline(params);
   const milestones = generateMilestones(params);
 
+  const [simulatorToolTab, setSimulatorToolTab] = useState<'LIVRET_A' | 'GOAL' | 'TABLE'>('LIVRET_A');
+
   return (
     <div className="space-y-6">
       
@@ -65,27 +67,77 @@ export const SimulatorView: React.FC<SimulatorViewProps> = ({
         inflationRate={params.inflationRate}
       />
 
-      {/* 4. Comparateur PEA vs Livret A (Le coût de l'inaction) */}
-      <LivretAComparisonCard
-        currentPortfolioValuation={params.initialCapital}
-        defaultMonthlyDca={params.monthlyContribution}
-        expectedPeaRate={params.expectedReturnRate}
-      />
+      {/* 4. Outils d'aide à la décision (Sous-onglets épurés) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between bg-slate-900/60 p-1.5 rounded-xl border border-slate-800">
+          <div className="flex items-center space-x-1">
+            <button
+              type="button"
+              onClick={() => setSimulatorToolTab('LIVRET_A')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
+                simulatorToolTab === 'LIVRET_A'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              <span>⚖️ Comparateur PEA vs Livret A</span>
+            </button>
 
-      {/* 5. Tableau complet chiffré des jalons (5, 10, 15, 20, 25, 30 ans) */}
-      <SimulationMilestonesTable
-        milestones={milestones}
-        adjustForInflation={params.adjustForInflation}
-        inflationRate={params.inflationRate}
-      />
+            <button
+              type="button"
+              onClick={() => setSimulatorToolTab('GOAL')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
+                simulatorToolTab === 'GOAL'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              <span>🎯 Calculateur d'Objectif Inversé</span>
+            </button>
 
-      {/* 6. Calculateur d'objectif inverse */}
-      <GoalCalculator
-        initialCapital={params.initialCapital}
-        expectedRate={params.expectedReturnRate}
-        adjustForInflation={params.adjustForInflation}
-        inflationRate={params.inflationRate}
-      />
+            <button
+              type="button"
+              onClick={() => setSimulatorToolTab('TABLE')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
+                simulatorToolTab === 'TABLE'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              <span>📋 Tableau Chiffré des Jalons</span>
+            </button>
+          </div>
+
+          <span className="text-[11px] text-slate-500 hidden sm:inline font-mono mr-2">
+            Outils Complémentaires
+          </span>
+        </div>
+
+        {simulatorToolTab === 'LIVRET_A' && (
+          <LivretAComparisonCard
+            currentPortfolioValuation={params.initialCapital}
+            defaultMonthlyDca={params.monthlyContribution}
+            expectedPeaRate={params.expectedReturnRate}
+          />
+        )}
+
+        {simulatorToolTab === 'GOAL' && (
+          <GoalCalculator
+            initialCapital={params.initialCapital}
+            expectedRate={params.expectedReturnRate}
+            adjustForInflation={params.adjustForInflation}
+            inflationRate={params.inflationRate}
+          />
+        )}
+
+        {simulatorToolTab === 'TABLE' && (
+          <SimulationMilestonesTable
+            milestones={milestones}
+            adjustForInflation={params.adjustForInflation}
+            inflationRate={params.inflationRate}
+          />
+        )}
+      </div>
 
       {/* 6. Guide & Rappel des règles fiscales du PEA */}
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950/20 to-slate-900 border border-slate-800 rounded-2xl p-5 text-xs text-slate-300">
