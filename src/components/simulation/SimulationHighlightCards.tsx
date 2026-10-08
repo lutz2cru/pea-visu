@@ -5,11 +5,15 @@ import { Sparkles, Calendar, TrendingUp, Coins, ShieldCheck, ArrowUpRight } from
 interface SimulationHighlightCardsProps {
   milestones: SimulationMilestone[];
   monthlyContribution: number;
+  adjustForInflation?: boolean;
+  inflationRate?: number;
 }
 
 export const SimulationHighlightCards: React.FC<SimulationHighlightCardsProps> = ({
   milestones,
-  monthlyContribution
+  monthlyContribution,
+  adjustForInflation = false,
+  inflationRate = 2.0
 }) => {
   const m10 = milestones.find(m => m.years === 10);
   const m20 = milestones.find(m => m.years === 20);
@@ -68,7 +72,16 @@ export const SimulationHighlightCards: React.FC<SimulationHighlightCardsProps> =
 
               {/* Valeur Totale */}
               <div className="mt-3">
-                <span className="text-[11px] text-slate-400 font-medium">Valeur estimée du PEA</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    {adjustForInflation ? 'Pouvoir d\'achat réel (Euros 2026)' : 'Valeur estimée du PEA'}
+                  </span>
+                  {adjustForInflation && (
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono px-1.5 py-0.2 rounded border border-emerald-500/30">
+                      -{inflationRate}%/an
+                    </span>
+                  )}
+                </div>
                 <div className="text-3xl font-extrabold tracking-tight text-white mt-0.5">
                   {m.portfolioValue.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €
                 </div>

@@ -8,6 +8,8 @@ import { PositionsTable } from './components/PositionsTable';
 import { FileImportModal } from './components/FileImportModal';
 import { SettingsModal } from './components/SettingsModal';
 import { SimulatorView } from './components/simulation/SimulatorView';
+import { SavingsStrategyView } from './components/savings/SavingsStrategyView';
+import { PeaLimitCard } from './components/savings/PeaLimitCard';
 import { DcaPlanCard } from './components/dca/DcaPlanCard';
 import { INITIAL_PORTFOLIO_DATA } from './data/defaultData';
 import { PortfolioData, BenchmarkChoice, InvestmentMode } from './types/portfolio';
@@ -16,11 +18,12 @@ import {
   computeYearlyPerformance,
   generateMonthlyTimeline
 } from './utils/calculations';
-import { ShieldCheck, BarChart3, Rocket, Sparkles } from 'lucide-react';
+import { ShieldCheck, BarChart3, Rocket, Sparkles, Compass } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Navigation par onglets
-  const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'SIMULATOR'>('DASHBOARD');
+  const [activeTab, setActiveTab] = useState<'DASHBOARD' | 'SIMULATOR' | 'SAVINGS'>('DASHBOARD');
+
 
   // Paramètres simulateur
   const [simulatorMonthlyAmount, setSimulatorMonthlyAmount] = useState<number>(100);
@@ -100,19 +103,27 @@ export const App: React.FC = () => {
           <nav className="flex space-x-2 py-2.5">
             <button
               onClick={() => setActiveTab('DASHBOARD')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 transition ${activeTab === 'DASHBOARD' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}`}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 transition shrink-0 ${activeTab === 'DASHBOARD' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}`}
             >
               <BarChart3 className="w-4 h-4" />
-              <span>Tableau de Bord & Historique (2024-2026)</span>
+              <span>Tableau de Bord & Historique</span>
             </button>
 
             <button
               onClick={() => setActiveTab('SIMULATOR')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 transition ${activeTab === 'SIMULATOR' ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}`}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 transition shrink-0 ${activeTab === 'SIMULATOR' ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}`}
             >
               <Rocket className="w-4 h-4 text-indigo-400" />
-              <span>Projections & Simulations (10, 20, 30 ans)</span>
-              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-500 text-white font-bold">
+              <span>Projections & Simulateur (10, 20, 30 ans)</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('SAVINGS')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 transition shrink-0 ${activeTab === 'SAVINGS' ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}`}
+            >
+              <Compass className="w-4 h-4 text-amber-400" />
+              <span>Stratégie & Optimiseur d'Épargne</span>
+              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500 text-slate-950 font-bold">
                 Nouveau
               </span>
             </button>
@@ -129,7 +140,7 @@ export const App: React.FC = () => {
       {/* Contenu principal */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         
-        {activeTab === 'DASHBOARD' ? (
+        {activeTab === 'DASHBOARD' && (
           <>
             {/* Bandeau de contexte et synthèse */}
             <div className="bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-indigo-950/40 border border-emerald-500/20 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-sm">
@@ -163,14 +174,22 @@ export const App: React.FC = () => {
             {/* 1. Carte Plan DCA 100€/mois WPEA & Rappel Téléphone */}
             <DcaPlanCard onGoToSimulator={handleGoToSimulatorWithAmount} />
 
-            {/* 2. Cartes de métriques clés */}
+            {/* 2. Jauge du Plafond Légal des 150 000 € de Versements */}
+            <PeaLimitCard
+              investedAmount={summary.totalInvested}
+              currentValuation={summary.totalValuation}
+              defaultMonthlyContribution={simulatorMonthlyAmount}
+              expectedReturnRate={Math.round((summary.annualizedReturn * 100) * 100) / 100 || 7.55}
+            />
+
+            {/* 3. Cartes de métriques clés */}
             <MetricCards
               summary={summary}
               startDate={startDate}
               includeDividends={includeDividends}
             />
 
-            {/* 3. Graphiques Rendement Annuel + Allocation */}
+            {/* 4. Graphiques Rendement Annuel + Allocation */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
                 <YearlyPerformanceChart
@@ -186,25 +205,38 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            {/* 4. Courbe d'enrichissement et d'évolution dans le temps */}
+            {/* 5. Courbe d'enrichissement et d'évolution dans le temps */}
             <WealthEvolutionChart
               timelineData={timelineData}
               investmentMode={investmentMode}
               onModeChange={setInvestmentMode}
             />
 
-            {/* 5. Tableau complet des 6 lignes */}
+            {/* 6. Tableau complet des 6 lignes */}
             <PositionsTable
               positions={portfolio.positions}
               onUpdatePurchaseYear={handleUpdatePurchaseYear}
             />
           </>
-        ) : (
-          /* Onglet 2 : Simulateur de projection à long terme */
+        )}
+
+        {activeTab === 'SIMULATOR' && (
+          /* Onglet 2 : Simulateur de projection à long terme avec inflation corrigée */
           <SimulatorView
             currentValuation={summary.totalValuation}
             currentAnnualizedReturn={summary.annualizedReturn}
             initialMonthlyContribution={simulatorMonthlyAmount}
+          />
+        )}
+
+        {activeTab === 'SAVINGS' && (
+          /* Onglet 3 : Stratégie & Optimiseur d'Épargne */
+          <SavingsStrategyView
+            positions={portfolio.positions}
+            currentValuation={summary.totalValuation}
+            investedAmount={summary.totalInvested}
+            expectedReturnRate={Math.round((summary.annualizedReturn * 100) * 100) / 100 || 7.55}
+            defaultMonthlyDca={simulatorMonthlyAmount}
           />
         )}
 

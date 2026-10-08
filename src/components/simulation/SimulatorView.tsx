@@ -9,7 +9,9 @@ import { SimulationHighlightCards } from './SimulationHighlightCards';
 import { SimulationChart } from './SimulationChart';
 import { SimulationMilestonesTable } from './SimulationMilestonesTable';
 import { GoalCalculator } from './GoalCalculator';
+import { LivretAComparisonCard } from '../savings/LivretAComparisonCard';
 import { Info, Sparkles, BookOpen, ShieldCheck, ArrowRight } from 'lucide-react';
+
 
 interface SimulatorViewProps {
   currentValuation: number;
@@ -51,23 +53,38 @@ export const SimulatorView: React.FC<SimulatorViewProps> = ({
       <SimulationHighlightCards
         milestones={milestones}
         monthlyContribution={params.monthlyContribution}
+        adjustForInflation={params.adjustForInflation}
+        inflationRate={params.inflationRate}
       />
 
       {/* 3. Graphique d'évolution des intérêts composés */}
       <SimulationChart
         timeline={timeline}
         expectedRate={params.expectedReturnRate}
+        adjustForInflation={params.adjustForInflation}
+        inflationRate={params.inflationRate}
       />
 
-      {/* 4. Tableau complet chiffré des jalons (5, 10, 15, 20, 25, 30 ans) */}
+      {/* 4. Comparateur PEA vs Livret A (Le coût de l'inaction) */}
+      <LivretAComparisonCard
+        currentPortfolioValuation={params.initialCapital}
+        defaultMonthlyDca={params.monthlyContribution}
+        expectedPeaRate={params.expectedReturnRate}
+      />
+
+      {/* 5. Tableau complet chiffré des jalons (5, 10, 15, 20, 25, 30 ans) */}
       <SimulationMilestonesTable
         milestones={milestones}
+        adjustForInflation={params.adjustForInflation}
+        inflationRate={params.inflationRate}
       />
 
-      {/* 5. Calculateur d'objectif inverse */}
+      {/* 6. Calculateur d'objectif inverse */}
       <GoalCalculator
         initialCapital={params.initialCapital}
         expectedRate={params.expectedReturnRate}
+        adjustForInflation={params.adjustForInflation}
+        inflationRate={params.inflationRate}
       />
 
       {/* 6. Guide & Rappel des règles fiscales du PEA */}

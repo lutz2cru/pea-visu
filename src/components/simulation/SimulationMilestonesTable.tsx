@@ -4,27 +4,41 @@ import { Table, Calendar, ShieldCheck, Coins, Award } from 'lucide-react';
 
 interface SimulationMilestonesTableProps {
   milestones: SimulationMilestone[];
+  adjustForInflation?: boolean;
+  inflationRate?: number;
 }
 
 export const SimulationMilestonesTable: React.FC<SimulationMilestonesTableProps> = ({
-  milestones
+  milestones,
+  adjustForInflation = false,
+  inflationRate = 2.0
 }) => {
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-sm">
       
       {/* En-tête */}
-      <div className="flex items-center space-x-2 mb-4">
-        <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
-          <Table className="w-4 h-4" />
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+            <Table className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-white tracking-tight">
+              Tableau des Jalons Clés (5, 10, 15, 20, 25, 30 ans)
+            </h3>
+            <p className="text-xs text-slate-400">
+              {adjustForInflation
+                ? `Montants en euros constants (pouvoir d'achat déflaté à ${inflationRate}% par an)`
+                : 'Détail chiffré année par année avec calcul de la fiscalité PEA et de la rente passive'}
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-base font-bold text-white tracking-tight">
-            Tableau des Jalons Clés (5, 10, 15, 20, 25, 30 ans)
-          </h3>
-          <p className="text-xs text-slate-400">
-            Détail chiffré année par année avec calcul de la fiscalité PEA et de la rente passive
-          </p>
-        </div>
+
+        {adjustForInflation && (
+          <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-medium">
+            Déflaté à {inflationRate}% / an
+          </span>
+        )}
       </div>
 
       <div className="overflow-x-auto">
