@@ -23,3 +23,11 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+/* Remove default focus outline on Recharts SVG elements */
+.recharts-pie-sector:focus,
+.recharts-sector:focus,
+.recharts-surface:focus {
+  outline: none !important;
+}
+
