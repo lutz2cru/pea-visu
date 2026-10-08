@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Position } from '../../types/portfolio';
-import { SlidersHorizontal, ShoppingCart, ArrowRight, CheckCircle2, Sparkles, Scale, RefreshCw } from 'lucide-react';
+import { SlidersHorizontal, ShoppingCart, ArrowRight, CheckCircle2, Sparkles, Scale, RefreshCw, Calendar } from 'lucide-react';
+import { downloadDcaCalendarReminder } from '../../utils/calendar';
+
 
 interface DcaRebalancerProps {
   positions: Position[];
@@ -181,25 +183,38 @@ export const DcaRebalancer: React.FC<DcaRebalancerProps> = ({ positions }) => {
           </div>
         </div>
 
-        {/* Sélection du budget à verser */}
-        <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
-          <span className="text-xs text-slate-400">À investir ce mois :</span>
-          <div className="flex items-center gap-1">
-            {[50, 100, 150, 200, 300].map(amt => (
-              <button
-                key={amt}
-                type="button"
-                onClick={() => setBudget(amt)}
-                className={`text-xs px-2 py-0.5 rounded-md font-mono transition ${
-                  budget === amt
-                    ? 'bg-indigo-500 text-white font-bold'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                {amt}€
-              </button>
-            ))}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Sélection du budget à verser */}
+          <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+            <span className="text-xs text-slate-400">Versement ce mois :</span>
+            <div className="flex items-center gap-1">
+              {[50, 100, 150, 200, 300].map(amt => (
+                <button
+                  key={amt}
+                  type="button"
+                  onClick={() => setBudget(amt)}
+                  className={`text-xs px-2 py-0.5 rounded-md font-mono transition ${
+                    budget === amt
+                      ? 'bg-indigo-500 text-white font-bold'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {amt}€
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Bouton Rappel Smartphone */}
+          <button
+            type="button"
+            onClick={downloadDcaCalendarReminder}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition"
+            title="Ajouter un rappel mensuel à votre calendrier smartphone (.ics)"
+          >
+            <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="hidden sm:inline">Rappel Téléphone (.ics)</span>
+          </button>
         </div>
       </div>
 

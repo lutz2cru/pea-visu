@@ -35,19 +35,31 @@ export const MetricCards: React.FC<MetricCardsProps> = ({
         </div>
       </div>
 
-      {/* 2. Capital Investi */}
+      {/* 2. Capital Investi & Plafond 150 000 € */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-sm hover:border-slate-700 transition">
         <div className="flex items-center justify-between text-slate-400 text-xs mb-2 font-medium">
-          <span>Capital Investi (PRU)</span>
+          <span>Capital Investi / Plafond</span>
           <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400">
             <PiggyBank className="w-4 h-4" />
           </div>
         </div>
         <div className="text-2xl font-bold tracking-tight text-white">
-          {summary.totalInvested.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+          {summary.totalInvested.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} €
+          <span className="text-xs font-normal text-slate-500 ml-1">/ 150 000 €</span>
         </div>
-        <div className="mt-2 text-xs text-slate-400">
-          Prix de Revient Unitaire cumulé
+        
+        {/* Mini jauge de progression vers les 150 000 € */}
+        <div className="mt-2 space-y-1">
+          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div
+              style={{ width: `${Math.min(100, Math.max(2, (summary.totalInvested / 150000) * 100))}%` }}
+              className="h-full bg-blue-500 rounded-full"
+            />
+          </div>
+          <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+            <span>{((summary.totalInvested / 150000) * 100).toFixed(1)}% atteint</span>
+            <span>Reste {(150000 - summary.totalInvested).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €</span>
+          </div>
         </div>
       </div>
 
