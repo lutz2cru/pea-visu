@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, SlidersHorizontal, Calendar } from 'lucide-react';
+import { X, SlidersHorizontal, Calendar, Trash2 } from 'lucide-react';
 import { PEA_TAX_FREE_YEARS } from '../config/fiscal';
 import { addYears, formatMonthYear, parseYearMonth, toYearMonth } from '../utils/dates';
 
@@ -9,13 +9,16 @@ interface SettingsModalProps {
   /** Date du premier versement sur le PEA (AAAA-MM). */
   startDate: string;
   onStartDateChange: (date: string) => void;
+  /** Efface les données enregistrées et revient au portefeuille d'exemple. */
+  onReset: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onClose,
   startDate,
-  onStartDateChange
+  onStartDateChange,
+  onReset
 }) => {
   if (!isOpen) return null;
 
@@ -45,7 +48,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </div>
 
-        <div className="space-y-4 text-xs">
+        <div className="space-y-4 text-sm">
           <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
             <label htmlFor="pea-start" className="font-semibold text-slate-200 mb-1 flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-indigo-400" />
@@ -70,6 +73,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <strong>{formatMonthYear(taxFree)}</strong>.
               </p>
             )}
+          </div>
+
+          <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="font-semibold text-slate-200 text-sm">Effacer mes données</div>
+              <p className="text-slate-400 mt-0.5">Supprime le portefeuille enregistré dans ce navigateur et revient à l'exemple.</p>
+            </div>
+            <button
+              type="button"
+              onClick={onReset}
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-rose-200 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-lg transition"
+            >
+              <Trash2 className="w-4 h-4" aria-hidden="true" />
+              Effacer
+            </button>
           </div>
         </div>
 

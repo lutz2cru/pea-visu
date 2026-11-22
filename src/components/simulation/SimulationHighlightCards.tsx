@@ -1,8 +1,8 @@
 import React from 'react';
-import { PEA_SOCIAL_TAX_RATE } from '../../config/fiscal';
 import { currentYear } from '../../utils/dates';
+import { formatEuro, formatPoints } from '../../utils/format';
 import { SimulationMilestone } from '../../types/simulation';
-import { Sparkles, Calendar, TrendingUp, Coins, ShieldCheck, ArrowUpRight } from 'lucide-react';
+import { InfoTip } from '../ui/InfoTip';
 
 interface SimulationHighlightCardsProps {
   milestones: SimulationMilestone[];
@@ -11,126 +11,52 @@ interface SimulationHighlightCardsProps {
   inflationRate?: number;
 }
 
+const HORIZONS = [10, 20, 30];
+
 export const SimulationHighlightCards: React.FC<SimulationHighlightCardsProps> = ({
   milestones,
-  monthlyContribution,
-  adjustForInflation = false,
-  inflationRate = 2.0
-}) => {
-  const m10 = milestones.find(m => m.years === 10);
-  const m20 = milestones.find(m => m.years === 20);
-  const m30 = milestones.find(m => m.years === 30);
+  adjustForInflation = false
+}) => (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {HORIZONS.map(years => {
+      const m = milestones.find(x => x.years === years);
+      if (!m) return null;
+      return (
+        <section key={years} className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <h3 className="text-base font-bold text-white">
+            Dans {years} ans <span className="text-slate-400 font-medium">({m.targetYear})</span>
+          </h3>
 
-  const targets = [
-    {
-      m: m10,
-      label: 'Dans 10 ans',
-      badge: 'Horizon Moyen Terme',
-      badgeColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-      gradient: 'from-blue-950/30 to-slate-900/90',
-      borderColor: 'border-blue-500/30'
-    },
-    {
-      m: m20,
-      label: 'Dans 20 ans',
-      badge: 'Effet Boule de Neige',
-      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-      gradient: 'from-emerald-950/30 to-slate-900/90',
-      borderColor: 'border-emerald-500/30'
-    },
-    {
-      m: m30,
-      label: 'Dans 30 ans',
-      badge: 'Liberté Financière / Retraite',
-      badgeColor: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-      gradient: 'from-purple-950/30 to-slate-900/90',
-      borderColor: 'border-purple-500/30'
-    }
-  ];
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {targets.map(({ m, label, badge, badgeColor, gradient, borderColor }) => {
-        if (!m) return null;
-        return (
-          <div
-            key={label}
-            className={`bg-gradient-to-b ${gradient} border ${borderColor} rounded-2xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between`}
-          >
-            {/* Haut de la carte */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{label}</span>
-                  <span className="text-white font-extrabold bg-slate-800/80 px-2 py-0.5 rounded-full text-[11px] border border-slate-700/60">
-                    Année {m.targetYear}
-                  </span>
-                </span>
-                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${badgeColor}`}>
-                  {badge}
-                </span>
-              </div>
-
-              {/* Valeur Totale */}
-              <div className="mt-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-slate-400 font-medium">
-                    {adjustForInflation ? `Pouvoir d'achat réel (euros ${currentYear()})` : 'Valeur estimée du PEA'}
-                  </span>
-                  {adjustForInflation && (
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono px-1.5 py-0.2 rounded border border-emerald-500/30">
-                      -{inflationRate}%/an
-                    </span>
-                  )}
-                </div>
-                <div className="text-3xl font-extrabold tracking-tight text-white mt-0.5">
-                  {m.portfolioValue.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €
-                </div>
-              </div>
-
-              {/* Décomposition Versé vs Gains */}
-              <div className="mt-4 pt-3 border-t border-slate-800/80 space-y-1.5 text-xs">
-                <div className="flex justify-between items-center text-slate-400">
-                  <span>Votre capital versé :</span>
-                  <span className="font-mono text-slate-200">{m.totalInvested.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €</span>
-                </div>
-                <div className="flex justify-between items-center text-emerald-400 font-semibold">
-                  <span>Gains d'intérêts composés :</span>
-                  <span className="font-mono">+{m.totalGains.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €</span>
-                </div>
-                <div className="flex justify-between items-center text-slate-400">
-                  <span>Part des gains dans le total :</span>
-                  <span className="font-mono font-bold text-emerald-300">{m.gainsSharePercent} %</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bas de la carte : Rente ou Net fiscal */}
-            <div className="mt-4 pt-3 border-t border-slate-800/80 bg-slate-950/40 -mx-5 -mb-5 p-4 rounded-b-2xl">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-400 flex items-center gap-1">
-                  <Coins className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Rente mensuelle estimée :</span>
-                </span>
-                <span className="font-mono font-bold text-amber-300">
-                  {m.monthlyPassiveIncome.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € / mois
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1">
-                <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                  <span>Net après PS ({PEA_SOCIAL_TAX_RATE.toLocaleString('fr-FR')} %) :</span>
-                </span>
-                <span className="font-mono text-slate-300 font-medium">
-                  {m.netValueAfterTax.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €
-                </span>
-              </div>
-            </div>
-
+          <div className="mt-3 text-sm text-slate-400">
+            {adjustForInflation ? `Valeur estimée, en euros de ${currentYear()}` : 'Valeur estimée du PEA'}
           </div>
-        );
-      })}
-    </div>
-  );
-};
+          <div className="text-3xl font-bold tracking-tight text-white tabular-nums">
+            {formatEuro(m.portfolioValue, { decimals: 0 })}
+          </div>
+
+          <dl className="mt-4 pt-3 border-t border-slate-800 space-y-2 text-sm">
+            <div className="flex justify-between gap-3">
+              <dt className="text-slate-400">Tu auras versé</dt>
+              <dd className="text-slate-100 tabular-nums">{formatEuro(m.totalInvested, { decimals: 0 })}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-slate-400 flex items-center gap-1">Gains <InfoTip term="interetsComposes" /></dt>
+              <dd className="text-emerald-400 font-semibold tabular-nums text-right">
+                {formatEuro(m.totalGains, { decimals: 0, sign: true })}
+                <span className="text-slate-400 font-normal"> ({formatPoints(m.gainsSharePercent, { decimals: 0 })} du total)</span>
+              </dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-slate-400 flex items-center gap-1">Après impôts <InfoTip term="prelevementsSociaux" /></dt>
+              <dd className="text-slate-100 tabular-nums">{formatEuro(m.netValueAfterTax, { decimals: 0 })}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-slate-400 flex items-center gap-1">Revenu possible <InfoTip term="regle4" /></dt>
+              <dd className="text-amber-300 font-semibold tabular-nums">{formatEuro(m.monthlyPassiveIncome, { decimals: 0 })} / mois</dd>
+            </div>
+          </dl>
+        </section>
+      );
+    })}
+  </div>
+);

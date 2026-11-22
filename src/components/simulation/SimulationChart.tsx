@@ -41,7 +41,7 @@ export const SimulationChart: React.FC<SimulationChartProps> = ({
               Courbe des Intérêts Composés dans le Temps
             </h3>
             {adjustForInflation && (
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono px-2 py-0.5 rounded-full border border-emerald-500/30">
+              <span className="text-xs bg-emerald-500/20 text-emerald-300 font-mono px-2 py-0.5 rounded-full border border-emerald-500/30">
                 Déflaté à {inflationRate}% / an
               </span>
             )}

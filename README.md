@@ -22,21 +22,28 @@ Sous Windows : double-clic sur `start.bat`, ou `Ctrl + Shift + B` dans VS Code.
 
 ## Fonctionnalités
 
-### Mon portefeuille
-- **Chiffres clés** : valeur totale, plus-value latente, rendement annualisé, dividendes estimés, montant investi par rapport au plafond de 150 000 €.
-- **Rendement annualisé** : taux de rendement interne calculé à partir de la date du premier achat de chaque ligne (modifiable dans le tableau). C'est une estimation tant que l'historique complet des opérations n'est pas importé.
-- **Performance de chaque ligne** : plus ou moins-value en % ou en €, avec le rendement annualisé au survol.
-- **Répartition** : poids de chaque ligne et part ETF / actions.
-- **Où placer mon prochain versement ?** : choisis une répartition cible (70 % ETF / 30 % actions, 100 % ETF, priorité dividendes ou ta propre cible ligne par ligne) et l'outil calcule les parts entières à acheter pour t'en rapprocher sans rien vendre. Rappel mensuel téléchargeable (.ics).
-- **Détail des lignes** : PRU, cours, plus-value, rendement annualisé, dividende estimé (rendement modifiable) et date du premier achat.
+L'application est organisée en 4 onglets (en haut sur ordinateur, en bas de l'écran sur téléphone). Les termes techniques ont une bulle d'aide **?** qui les explique en langage courant.
+
+### Vue d'ensemble
+La page d'accueil répond à trois questions :
+- **Combien j'ai ?** : valeur du PEA, gain depuis le début, rendement moyen par an (estimé à partir de la date du premier achat de chaque ligne), dividendes estimés, date des 5 ans fiscaux et plafond utilisé.
+- **Comment vont mes lignes ? / Comment c'est réparti ?** : gain ou perte de chaque ligne (en % ou en €) et poids de chaque ligne, avec la part ETF / actions.
+- **Que faire ce mois-ci ?** : les parts à acheter avec ton prochain versement.
+
+### Mes lignes
+Détail de chaque ligne : poids, quantité, PRU, cours, valeur, gain, rendement par an. Le **rendement du dividende** et la **date du premier achat** sont modifiables : ils alimentent les estimations.
+
+### Prochain versement
+En trois étapes : le montant, la répartition visée (70 % ETF / 30 % actions, 100 % ETF, priorité dividendes ou ta propre cible ligne par ligne), puis les parts entières à acheter pour t'en rapprocher sans rien vendre. Rappel mensuel téléchargeable pour ton agenda (.ics).
 
 ### Projections
 - Simulation des intérêts composés sur 10, 20 ou 30 ans (versement mensuel, rendement espéré, inflation).
-- Valeur nette après prélèvements sociaux, rente estimée (règle des 4 %).
-- Comparaison avec le Livret A, calculateur d'effort d'épargne pour atteindre un objectif.
+- Valeur après prélèvements sociaux, revenu mensuel possible (règle des 4 %).
+- Comparaison avec le Livret A, calcul de l'effort d'épargne pour atteindre un objectif.
 
 ### Paramètres
 - **Date du premier versement** sur le PEA : elle fait courir le délai fiscal de 5 ans et sert de date d'achat par défaut pour les nouvelles lignes importées.
+- **Effacer mes données** : revient au portefeuille d'exemple.
 
 ---
 

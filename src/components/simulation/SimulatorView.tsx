@@ -84,46 +84,46 @@ export const SimulatorView: React.FC<SimulatorViewProps> = ({
       {/* 4. Outils d'aide à la décision (Sous-onglets épurés) */}
       <div className="space-y-3">
         <div className="flex items-center justify-between bg-slate-900/60 p-1.5 rounded-xl border border-slate-800">
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 overflow-x-auto">
             <button
               type="button"
               onClick={() => setSimulatorToolTab('LIVRET_A')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
+              className={`px-3 py-2 rounded-lg text-sm font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
                 simulatorToolTab === 'LIVRET_A'
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <span>⚖️ Comparateur PEA vs Livret A</span>
+              <span>PEA ou Livret A ?</span>
             </button>
 
             <button
               type="button"
               onClick={() => setSimulatorToolTab('GOAL')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
+              className={`px-3 py-2 rounded-lg text-sm font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
                 simulatorToolTab === 'GOAL'
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <span>🎯 Calculateur d'Objectif Inversé</span>
+              <span>Atteindre un objectif</span>
             </button>
 
             <button
               type="button"
               onClick={() => setSimulatorToolTab('TABLE')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition ${
+              className={`px-3 py-2 rounded-lg text-sm font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
                 simulatorToolTab === 'TABLE'
                   ? 'bg-amber-500 text-slate-950 shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <span>📋 Tableau Chiffré des Jalons</span>
+              <span>Tableau année par année</span>
             </button>
           </div>
 
-          <span className="text-[11px] text-slate-500 hidden sm:inline font-mono mr-2">
-            Outils Complémentaires
+          <span className="text-xs text-slate-400 hidden lg:inline font-mono mr-2">
+            Outils
           </span>
         </div>
 
@@ -154,23 +154,23 @@ export const SimulatorView: React.FC<SimulatorViewProps> = ({
       </div>
 
       {/* 6. Guide & Rappel des règles fiscales du PEA */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950/20 to-slate-900 border border-slate-800 rounded-2xl p-5 text-xs text-slate-300">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950/20 to-slate-900 border border-slate-800 rounded-2xl p-5 text-sm text-slate-300">
         <div className="flex items-center space-x-2 mb-3 text-white font-bold text-sm">
           <BookOpen className="w-4 h-4 text-indigo-400" />
-          <span>Guide : La mécanique des intérêts composés & les règles du PEA</span>
+          <span>Bon à savoir sur le PEA</span>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
             <h4 className="font-semibold text-white mb-1">1. Plafond de versement de 150 000 €</h4>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-slate-400 text-sm leading-relaxed">
               Le PEA est limité à 150 000 € de dépôts cumulés, mais <strong>la valorisation n'a aucun plafond</strong> ! Grâce aux intérêts composés, votre compte peut atteindre 300 000 €, 500 000 € ou plus.
             </p>
           </div>
 
           <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
             <h4 className="font-semibold text-white mb-1">2. Exonération d'impôt après 5 ans</h4>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-slate-400 text-sm leading-relaxed">
               {peaStart && taxFreeDate ? (
                 <>
                   Ton PEA a reçu son premier versement en <strong>{formatMonthYear(peaStart)}</strong> : il {taxFreeReached ? 'a franchi' : 'franchira'} ses 5 ans fiscaux en <strong>{formatMonthYear(taxFreeDate)}</strong>.{' '}
@@ -184,7 +184,7 @@ export const SimulatorView: React.FC<SimulatorViewProps> = ({
 
           <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80">
             <h4 className="font-semibold text-white mb-1">3. L'effet boule de neige exponentiel</h4>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-slate-400 text-sm leading-relaxed">
               Au début, votre effort d'épargne représente la quasi-totalité de votre capital. Mais après 15 à 20 ans, les <strong>gains générés chaque année dépassent largement le montant que vous versez</strong> de votre poche.
             </p>
           </div>

@@ -57,13 +57,10 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
           </div>
           <div>
             <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-              <span>Comparateur : PEA vs Livret A (Le Coût de l'Inaction)</span>
-              <span className="text-[11px] font-normal text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full">
-                Benchmark Épargne
-              </span>
+              <span>PEA ou Livret A : quelle différence ?</span>
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Mesurez l'enrichissement manqué si votre argent dort sur un livret plutôt que sur votre PEA
+            <p className="text-sm text-slate-400 mt-0.5">
+              Les mêmes versements placés sur un Livret A (sans risque) ou sur le PEA (avec l'hypothèse de rendement choisie plus haut)
             </p>
           </div>
         </div>
@@ -102,7 +99,7 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
                 <span className="text-xs font-bold text-white">
                   Horizon {c.years} ans ({c.calendarYear})
                 </span>
-                <span className="text-[11px] text-slate-400 font-mono">
+                <span className="text-xs text-slate-400 font-mono">
                   Versé : {c.invested.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €
                 </span>
               </div>
@@ -113,7 +110,7 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
                 {/* Livret A */}
                 <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Sur Livret A ({livretARate.toLocaleString('fr-FR')} % net, taux depuis {LIVRET_A_SINCE})</span>
+                    <span className="text-slate-400 block text-xs">Sur Livret A ({livretARate.toLocaleString('fr-FR')} % net, taux depuis {LIVRET_A_SINCE})</span>
                     <span className="font-mono text-slate-300 font-semibold">
                       +{c.livretGains.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € d'intérêts
                     </span>
@@ -126,7 +123,7 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
                 {/* PEA */}
                 <div className="bg-emerald-950/20 p-2.5 rounded-lg border border-emerald-500/30 flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-emerald-400 block text-[11px] font-semibold">Sur le PEA (hypothèse {peaRate.toLocaleString('fr-FR')} %/an)</span>
+                    <span className="text-emerald-400 block text-xs font-semibold">Sur le PEA (hypothèse {peaRate.toLocaleString('fr-FR')} %/an)</span>
                     <span className="font-mono text-emerald-400 font-bold">
                       +{c.peaGains.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € d'intérêts
                     </span>
@@ -141,11 +138,11 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
 
             {/* Badge Bonus PEA */}
             <div className="pt-2 border-t border-slate-800/80 bg-slate-900/60 -mx-4 -mb-4 p-3 text-center">
-              <span className="text-[10px] text-slate-400 block font-medium">Écart après prélèvements sociaux du PEA ({PEA_SOCIAL_TAX_RATE.toLocaleString('fr-FR')} %) :</span>
+              <span className="text-xs text-slate-400 block font-medium">Écart après prélèvements sociaux du PEA ({PEA_SOCIAL_TAX_RATE.toLocaleString('fr-FR')} %) :</span>
               <span className="font-mono font-extrabold text-emerald-400 text-sm block mt-0.5">
                 {c.extraWealth >= 0 ? '+' : ''}{c.extraWealth.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € nets
               </span>
-              <span className="text-[10px] text-slate-500 block">
+              <span className="text-xs text-slate-400 block">
                 PEA net : {c.peaNetTotal.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € (hypothèse de rendement, non garantie)
               </span>
             </div>
@@ -158,10 +155,10 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
       <div className="bg-gradient-to-r from-slate-950 via-amber-950/20 to-slate-950 border border-amber-500/20 rounded-xl p-4 text-xs text-slate-300 space-y-2">
         <div className="flex items-center gap-2 text-amber-300 font-bold">
           <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-          <span>La Règle d'Or de l'Épargnant : Ne confondez pas Sécurité et Croissance</span>
+          <span>Deux placements, deux rôles différents</span>
         </div>
-        <p className="text-slate-400 text-[11px] leading-relaxed">
-          Le Livret A est parfait pour votre <strong>épargne de précaution</strong> (gardez entre 3 et 6 mois de dépenses pour les imprévus). Mais au-delà de ce matelas de sécurité, l'inflation grignote votre pouvoir d'achat. Le <strong>PEA est le véhicule n°1</strong> pour faire fructifier votre épargne excédentaire sur le long terme sans impôt sur le revenu.
+        <p className="text-slate-400 text-xs leading-relaxed">
+          Le Livret A est garanti et disponible à tout moment : il sert d'<strong>épargne de précaution</strong> pour les imprévus. Le PEA vise le <strong>long terme</strong> : il a historiquement rapporté davantage en moyenne, mais sa valeur peut baisser fortement certaines années, et le rendement utilisé ici n'est qu'une hypothèse.
         </p>
       </div>
 

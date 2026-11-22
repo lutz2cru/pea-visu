@@ -157,7 +157,7 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
           <div>
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <span>Importer vos données Fortuneo</span>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <span className="text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                 Excel & CSV
               </span>
             </h3>
@@ -190,25 +190,25 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
               <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">Compte</span>
+                <span className="text-slate-400 block text-xs">Compte</span>
                 <span className="font-semibold text-slate-200 truncate block" title={parsedPreview.accountName}>
                   {parsedPreview.accountName}
                 </span>
               </div>
               <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">Date du relevé</span>
+                <span className="text-slate-400 block text-xs">Date du relevé</span>
                 <span className="font-semibold text-slate-200 block font-mono">
                   {parsedPreview.asOfDate}
                 </span>
               </div>
               <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">Valorisation totale</span>
+                <span className="text-slate-400 block text-xs">Valorisation totale</span>
                 <span className="font-bold text-white block font-mono">
                   {totalValo.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                 </span>
               </div>
               <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">Plus-value</span>
+                <span className="text-slate-400 block text-xs">Plus-value</span>
                 <span className={`font-bold block font-mono ${totalGain >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   {totalGain >= 0 ? '+' : ''}{totalGain.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
                 </span>
@@ -217,17 +217,17 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
 
             {/* Liste des positions trouvées */}
             <div className="pt-1">
-              <span className="text-[11px] text-slate-400 block mb-1.5 font-medium">
+              <span className="text-xs text-slate-400 block mb-1.5 font-medium">
                 {parsedPreview.positions.length} positions détectées :
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {parsedPreview.positions.map((p) => (
                   <span
                     key={p.id}
-                    className="text-[11px] px-2 py-0.5 rounded-md bg-slate-800/90 text-slate-200 border border-slate-700 font-mono flex items-center gap-1.5"
+                    className="text-xs px-2 py-0.5 rounded-md bg-slate-800/90 text-slate-200 border border-slate-700 font-mono flex items-center gap-1.5"
                   >
                     <strong className="text-white">{p.ticker || p.isin.slice(0, 4)}</strong>
-                    <span className="text-slate-400 text-[10px]">({p.quantity} × {p.currentPrice.toFixed(2)}€)</span>
+                    <span className="text-slate-400 text-xs">({p.quantity} × {p.currentPrice.toFixed(2)}€)</span>
                   </span>
                 ))}
               </div>
@@ -255,7 +255,7 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
                 <span className="text-sm font-semibold text-slate-200 group-hover:text-white text-center">
                   {isLoading ? 'Analyse en cours...' : 'Glissez-déposez votre fichier Excel ou CSV'}
                 </span>
-                <span className="text-xs text-slate-500 mt-1">
+                <span className="text-xs text-slate-400 mt-1">
                   Cliquez pour parcourir (.xlsx, .xls, .csv, .txt)
                 </span>
                 <input
