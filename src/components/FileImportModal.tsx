@@ -19,6 +19,8 @@ interface FileImportModalProps {
   onClose: () => void;
   onImportSuccess: (data: PortfolioData) => void;
   currentPositions?: Position[];
+  /** Date d'achat (AAAA-MM) attribuée par défaut aux lignes nouvelles. */
+  defaultPurchaseDate?: string;
 }
 
 const SAMPLE_CSV = `Portefeuille 000000000000,,,,,,,,,,,
@@ -37,7 +39,8 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
   isOpen,
   onClose,
   onImportSuccess,
-  currentPositions
+  currentPositions,
+  defaultPurchaseDate
 }) => {
   const [pasteContent, setPasteContent] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -54,7 +57,7 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
     setFileName(file.name);
 
     try {
-      const parsed = await parseFortuneoFile(file, currentPositions);
+      const parsed = await parseFortuneoFile(file, currentPositions, defaultPurchaseDate);
       if (parsed && parsed.positions.length > 0) {
         setParsedPreview(parsed);
       } else {
@@ -100,7 +103,7 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
   const handleProcessText = (text: string) => {
     setErrorMsg(null);
     setFileName('Texte collé');
-    const parsed = parseFortuneoCSV(text, currentPositions);
+    const parsed = parseFortuneoCSV(text, currentPositions, defaultPurchaseDate);
     if (parsed && parsed.positions.length > 0) {
       setParsedPreview(parsed);
     } else {
@@ -278,7 +281,7 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
                   className="text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1 transition"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Charger l'exemple du 08/10/2026</span>
+                  <span>Charger un exemple</span>
                 </button>
               </div>
 

@@ -1,4 +1,6 @@
 import React from 'react';
+import { PEA_SOCIAL_TAX_RATE } from '../../config/fiscal';
+import { currentYear } from '../../utils/dates';
 import { SimulationMilestone } from '../../types/simulation';
 import { Sparkles, Calendar, TrendingUp, Coins, ShieldCheck, ArrowUpRight } from 'lucide-react';
 
@@ -74,7 +76,7 @@ export const SimulationHighlightCards: React.FC<SimulationHighlightCardsProps> =
               <div className="mt-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-slate-400 font-medium">
-                    {adjustForInflation ? 'Pouvoir d\'achat réel (Euros 2026)' : 'Valeur estimée du PEA'}
+                    {adjustForInflation ? `Pouvoir d'achat réel (euros ${currentYear()})` : 'Valeur estimée du PEA'}
                   </span>
                   {adjustForInflation && (
                     <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono px-1.5 py-0.2 rounded border border-emerald-500/30">
@@ -118,7 +120,7 @@ export const SimulationHighlightCards: React.FC<SimulationHighlightCardsProps> =
               <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1">
                 <span className="flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                  <span>Net après PS (17,2%) :</span>
+                  <span>Net après PS ({PEA_SOCIAL_TAX_RATE.toLocaleString('fr-FR')} %) :</span>
                 </span>
                 <span className="font-mono text-slate-300 font-medium">
                   {m.netValueAfterTax.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €

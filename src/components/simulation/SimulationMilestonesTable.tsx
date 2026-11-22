@@ -1,4 +1,5 @@
 import React from 'react';
+import { PEA_SOCIAL_TAX_RATE } from '../../config/fiscal';
 import { SimulationMilestone } from '../../types/simulation';
 import { Table, Calendar, ShieldCheck, Coins, Award } from 'lucide-react';
 
@@ -51,7 +52,7 @@ export const SimulationMilestonesTable: React.FC<SimulationMilestonesTableProps>
               <th className="py-2.5 font-medium text-right text-emerald-400">Gains Générés</th>
               <th className="py-2.5 font-medium text-right">Valeur Totale</th>
               <th className="py-2.5 font-medium text-right text-indigo-300">Part Intérêts</th>
-              <th className="py-2.5 font-medium text-right text-slate-300">Net après PS (17,2%)</th>
+              <th className="py-2.5 font-medium text-right text-slate-300">Net après PS ({PEA_SOCIAL_TAX_RATE.toLocaleString('fr-FR')} %)</th>
               <th className="py-2.5 font-medium text-right text-amber-300">Rente Mensuelle (4%)</th>
             </tr>
           </thead>
@@ -102,7 +103,7 @@ export const SimulationMilestonesTable: React.FC<SimulationMilestonesTableProps>
       <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400 font-sans">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>Sur PEA : 0 % d'impôt sur le revenu après 5 ans (seuls 17,2 % de prélèvements sociaux sont dus sur les gains nets).</span>
+          <span>Sur PEA : 0 % d'impôt sur le revenu après 5 ans (seuls {PEA_SOCIAL_TAX_RATE.toLocaleString('fr-FR')} % de prélèvements sociaux sont dus sur les gains).</span>
         </div>
         <div className="flex items-center gap-2">
           <Coins className="w-4 h-4 text-amber-400" />

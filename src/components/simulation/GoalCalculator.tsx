@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { currentYear } from '../../utils/dates';
 import { calculateRequiredSavings } from '../../utils/simulation';
 import { Target, Sparkles, ArrowRight, PiggyBank, TrendingUp } from 'lucide-react';
 
@@ -79,7 +80,7 @@ export const GoalCalculator: React.FC<GoalCalculatorProps> = ({
             <div className="flex items-center justify-between text-xs mb-1.5">
               <span className="text-slate-300 font-medium">Pour quelle année cible ?</span>
               <span className="font-mono font-bold text-white text-sm">
-                {2026 + targetYears} (dans {targetYears} ans)
+                {currentYear() + targetYears} (dans {targetYears} ans)
               </span>
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -89,7 +90,7 @@ export const GoalCalculator: React.FC<GoalCalculatorProps> = ({
                   onClick={() => setTargetYears(y)}
                   className={`text-xs px-2.5 py-1 rounded-lg font-mono transition ${targetYears === y ? 'bg-indigo-500 text-white font-bold' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
                 >
-                  {2026 + y} ({y} ans)
+                  {currentYear() + y} ({y} ans)
                 </button>
               ))}
             </div>

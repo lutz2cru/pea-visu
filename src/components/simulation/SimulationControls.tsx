@@ -1,4 +1,5 @@
 import React from 'react';
+import { currentYear } from '../../utils/dates';
 import { SimulationParameters } from '../../types/simulation';
 import { Sliders, Sparkles, TrendingUp, Calendar, Coins, Percent, ShieldCheck } from 'lucide-react';
 
@@ -6,12 +7,15 @@ interface SimulationControlsProps {
   params: SimulationParameters;
   onChange: (newParams: SimulationParameters) => void;
   currentPortfolioValuation: number;
+  /** Rendement annualisé constaté du PEA (null si historique trop court). */
+  currentAnnualizedReturn: number | null;
 }
 
 export const SimulationControls: React.FC<SimulationControlsProps> = ({
   params,
   onChange,
-  currentPortfolioValuation
+  currentPortfolioValuation,
+  currentAnnualizedReturn
 }) => {
   const handleUpdate = (field: keyof SimulationParameters, value: any) => {
     onChange({
@@ -23,10 +27,16 @@ export const SimulationControls: React.FC<SimulationControlsProps> = ({
   const quickMonthlyAmounts = [50, 100, 200, 300, 500, 1000];
   const presetRates = [
     { label: '4% (Prudent)', value: 4.0 },
-    { label: '7.55% (Votre PEA actuel)', value: 7.55 },
     { label: '8.5% (MSCI World hist.)', value: 8.5 },
     { label: '10% (S&P 500 hist.)', value: 10.0 }
   ];
+  // Le rendement constaté n'est proposé que s'il est calculable et dans la plage du curseur.
+  if (currentAnnualizedReturn !== null) {
+    const observed = Math.round(currentAnnualizedReturn * 1000) / 10;
+    if (observed >= 3 && observed <= 12) {
+      presetRates.splice(1, 0, { label: `${observed}% (constaté sur ton PEA)`, value: observed });
+    }
+  }
 
   return (
     <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-5">
@@ -68,7 +78,7 @@ export const SimulationControls: React.FC<SimulationControlsProps> = ({
             onChange={(e) => handleUpdate('initialCapital', parseFloat(e.target.value) || 0)}
             className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none"
           />
-          <p className="text-[10px] text-slate-400">Valeur actuelle de votre PEA Fortuneo</p>
+          <p className="text-[10px] text-slate-400">Par défaut : valeur actuelle du PEA</p>
         </div>
 
         {/* 2. Versement mensuel */}
@@ -133,7 +143,7 @@ export const SimulationControls: React.FC<SimulationControlsProps> = ({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="text-slate-300 font-medium">Horizon max</span>
-            <span className="font-mono font-bold text-amber-300">{params.durationYears} ans ({2026 + params.durationYears})</span>
+            <span className="font-mono font-bold text-amber-300">{params.durationYears} ans ({currentYear() + params.durationYears})</span>
           </div>
           <div className="grid grid-cols-3 gap-1">
             {[10, 20, 30].map(y => (
@@ -142,7 +152,7 @@ export const SimulationControls: React.FC<SimulationControlsProps> = ({
                 onClick={() => handleUpdate('durationYears', y)}
                 className={`py-1.5 rounded-lg text-xs font-semibold transition ${params.durationYears === y ? 'bg-amber-500 text-slate-950 shadow-sm' : 'bg-slate-800 text-slate-400 hover:text-white'}`}
               >
-                {y} ans ({2026 + y})
+                {y} ans ({currentYear() + y})
               </button>
             ))}
           </div>
@@ -208,7 +218,7 @@ export const SimulationControls: React.FC<SimulationControlsProps> = ({
           <div className="flex items-center gap-2">
             <span className="text-base">💡</span>
             <span>
-              <strong>Mode Pouvoir d'Achat Réel actif :</strong> Tous les montants du simulateur (cartes, courbes, jalons et rentes) sont déflatés à <strong>{params.inflationRate}%/an</strong> pour refléter leur valeur en euros d'aujourd'hui (2026).
+              <strong>Mode Pouvoir d'Achat Réel actif :</strong> Tous les montants du simulateur (cartes, courbes, jalons et rentes) sont déflatés à <strong>{params.inflationRate}%/an</strong> pour refléter leur valeur en euros d'aujourd'hui ({currentYear()}).
             </span>
           </div>
           <button

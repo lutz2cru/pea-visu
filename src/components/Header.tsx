@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, UploadCloud, RefreshCw, SlidersHorizontal, ShieldCheck, Sparkles } from 'lucide-react';
+import { TrendingUp, UploadCloud, RefreshCw, SlidersHorizontal } from 'lucide-react';
 import { PortfolioData } from '../types/portfolio';
 
 interface HeaderProps {
@@ -26,17 +26,24 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-lg font-bold text-white tracking-tight">PEA Rendement</h1>
-              <span className="px-2 py-0.5 text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1">
-                <Sparkles className="w-3 h-3" /> Fortuneo Connect
-              </span>
+              <h1 className="text-lg font-bold text-white tracking-tight">PEA Visualiseur</h1>
+              {portfolio.isDemo && (
+                <span className="px-2 py-0.5 text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25 rounded-full">
+                  Exemple
+                </span>
+              )}
             </div>
             <div className="flex items-center space-x-2 text-xs text-slate-400">
               <span className="font-medium text-slate-300">{portfolio.accountName}</span>
+              {portfolio.accountNumber && (
+                <>
+                  <span>•</span>
+                  {/* Numéro masqué : seuls les 4 derniers chiffres sont affichés */}
+                  <span className="font-mono text-slate-400">N° •••• {portfolio.accountNumber.slice(-4)}</span>
+                </>
+              )}
               <span>•</span>
-              <span className="font-mono text-slate-400">N° {portfolio.accountNumber}</span>
-              <span>•</span>
-              <span className="text-slate-400">Export : {portfolio.asOfDate}</span>
+              <span className="text-slate-400">Situation au {portfolio.asOfDate}</span>
             </div>
           </div>
         </div>
@@ -46,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onOpenSettings}
             className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white rounded-lg border border-slate-700/60 transition shadow-sm"
-            title="Paramètres de calcul et benchmark"
+            title="Paramètres du PEA"
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400" />
             <span>Paramètres</span>
@@ -64,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onReset}
             className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition"
-            title="Réinitialiser avec les données d'origine"
+            title="Effacer mes données et revenir à l'exemple"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>

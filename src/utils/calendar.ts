@@ -1,27 +1,48 @@
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** Format iCalendar local : AAAAMMJJTHHMMSS */
+function icsLocal(d: Date): string {
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+}
+
+/** Format iCalendar UTC : AAAAMMJJTHHMMSSZ */
+function icsUtc(d: Date): string {
+  return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
+}
+
+/** Prochaine occurrence du jour `day` du mois à 9 h (ce mois-ci si elle n'est pas passée, sinon le mois suivant). */
+function nextMonthlyOccurrence(day: number, from: Date = new Date()): Date {
+  const candidate = new Date(from.getFullYear(), from.getMonth(), day, 9, 0, 0);
+  if (candidate > from) return candidate;
+  return new Date(from.getFullYear(), from.getMonth() + 1, day, 9, 0, 0);
+}
+
 /**
- * Génère et déclenche le téléchargement d'un fichier .ics (iCalendar)
- * pour configurer un rappel récurrent mensuel sur n'importe quel smartphone (iPhone/Android)
+ * Génère et télécharge un fichier .ics (iCalendar) avec un rappel mensuel de versement,
+ * importable dans l'agenda d'un smartphone (iPhone / Android) ou d'un ordinateur.
  */
-export function downloadDcaCalendarReminder(): void {
+export function downloadDcaCalendarReminder(amount: number, dayOfMonth: number = 2): void {
+  const start = nextMonthlyOccurrence(dayOfMonth);
+  const amountLabel = `${amount.toLocaleString('fr-FR')} €`;
+
   const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//PEA Visu//Rappel DCA WPEA Fortuneo//FR',
+    'PRODID:-//PEA Visu//Rappel versement//FR',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
-    'UID:dca-wpea-fortuneo-reminder-' + Date.now() + '@pea-visu',
-    'DTSTAMP:20261007T120000Z',
-    'DTSTART;TZID=Europe/Paris:20261102T090000',
-    'RRULE:FREQ=MONTHLY;BYMONTHDAY=2',
-    'SUMMARY:🚀 Investir 100 € sur PEA Fortuneo (WPEA)',
-    'DESCRIPTION:Rappel DCA Mensuel PEA Fortuneo :\\n- Actif : iShares MSCI World Swap PEA (WPEA)\\n- Code ISIN : IE0002XZSHO1\\n- Montant cible : ~100 € (environ 17 parts)\\n- Frais de courtage : 0 € (Offre Starter Fortuneo, 1er ordre < 500 € gratuit)\\n\\nOuvrez votre application Fortuneo pour passer votre ordre au marché.',
-    'LOCATION:Application Fortuneo',
+    `UID:pea-versement-${Date.now()}@pea-visu`,
+    `DTSTAMP:${icsUtc(new Date())}`,
+    `DTSTART;TZID=Europe/Paris:${icsLocal(start)}`,
+    `RRULE:FREQ=MONTHLY;BYMONTHDAY=${dayOfMonth}`,
+    `SUMMARY:Versement mensuel PEA (${amountLabel})`,
+    `DESCRIPTION:Rappel : versement de ${amountLabel} sur ton PEA.\\nOuvre PEA Visualiseur (Où placer mon prochain versement ?) pour voir quelles parts acheter.`,
     'STATUS:CONFIRMED',
     'BEGIN:VALARM',
     'TRIGGER:-PT0M',
     'ACTION:DISPLAY',
-    'DESCRIPTION:Investir 100 € sur WPEA (PEA Fortuneo)',
+    `DESCRIPTION:Versement mensuel PEA (${amountLabel})`,
     'END:VALARM',
     'END:VEVENT',
     'END:VCALENDAR'
@@ -31,7 +52,7 @@ export function downloadDcaCalendarReminder(): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', 'rappel_dca_pea_fortuneo.ics');
+  link.setAttribute('download', 'rappel_versement_pea.ics');
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

@@ -5,7 +5,7 @@ export interface SimulationParameters {
   durationYears: number;
   inflationRate: number; // in %
   adjustForInflation: boolean;
-  socialSecurityTaxRate: number; // in %, 17.2% for PEA
+  socialSecurityTaxRate: number; // en %, voir PEA_SOCIAL_TAX_RATE
   safeWithdrawalRate: number; // in %, 4% rule
 }
 

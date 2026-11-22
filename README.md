@@ -1,51 +1,54 @@
-# PEA Visualiseur & Simulateur Patrimonial (Fortuneo)
+# PEA Visualiseur
 
-Application locale, moderne et 100% privée d'analyse de rendement et de projection patrimoniale à long terme pour un PEA (Fortuneo).
+Application web locale pour suivre un PEA à partir de l'export de portefeuille Fortuneo (.xlsx, .xls ou .csv) et projeter son évolution à long terme.
 
----
+Toutes les données restent dans le navigateur (stockage local) : rien n'est envoyé à un serveur. Tant qu'aucun export n'a été importé, l'application affiche un **portefeuille d'exemple**.
 
-## 🚀 Accès & Lancement
-
-L'application est active et accessible dans votre navigateur :
-👉 **[http://localhost:3000/](http://localhost:3000/)** (ou **[http://localhost:3001/](http://localhost:3001/)**)
-
-Pour la relancer depuis **VS Code** à tout moment :
-- Ouvrez le terminal (`Ctrl + ~`) et tapez : `npm.cmd run dev`
-- Ou appuyez sur **`Ctrl + Shift + B`** (raccourci automatique configuré)
-- Ou double-cliquez sur `start.bat` depuis l'explorateur Windows.
+> Outil d'information et de visualisation : ce n'est pas un conseil en investissement.
 
 ---
 
-## 🌟 Les Deux Modules Principaux
+## Lancement
 
-### 1. 📊 Tableau de Bord & Historique (2024-2026)
-- **Métriques clés réelles** :
-  - Capital investi (PRU historique) : **2 082,15 €**
-  - Valorisation actuelle : **2 453,80 €**
-  - Plus-value latente brute : **+371,65 € (+17,85 %)**
-  - Rendement annualisé (CAGR) : **+7,55 % / an** (depuis Juillet 2024)
-  - Dividendes perçus estimés : **~92 €** (Total Return avec dividendes : **+22,27 %**)
-- **Découpage annuel (2024 S2, 2025, 2026 YTD)** : Bar chart interactif avec comparaison **S&P 500**, **MSCI World** et **CAC 40**.
-- **Courbe d'enrichissement temporel** : Évolution mois par mois du capital vs valorisation.
-- **Répartition & Diversification (Donut)** : 39,4 % en ETF vs 60,6 % en actions directes.
-- **Tableau détaillé des 6 lignes** : PRU, cours, +/- values, dividendes estimés et année d'acquisition.
+```bash
+npm install
+npm run dev
+```
 
-### 2. 🚀 Projections & Simulations Long Terme (10, 20, 30 ans)
-- **Cartes Jalons avec années calendaires précises** :
-  - **Dans 10 ans (Année 2036)**
-  - **Dans 20 ans (Année 2046)**
-  - **Dans 30 ans (Année 2056)**
-- **Paramètres interactifs réglables** :
-  - Capital initial (défini sur la valorisation actuelle ou personnalisable).
-  - Versement mensuel programmé (**DCA** de 0 € à 1 500 €/mois, avec boutons rapides 100€, 200€, 300€, 500€...).
-  - Rendement annuel espéré (de 3 % à 12 %, avec préréglages réalistes : 4% Prudent, 7.55% Votre PEA actuel, 8.5% MSCI World, 10% S&P 500).
-  - Horizon temporel (10, 20, 30 ans).
-  - Curseur d'ajustement à l'inflation (pouvoir d'achat réel en euros constants).
-- **Courbe des Intérêts Composés** :
-  - Mode **Versé vs Gains** : met en évidence l'effet boule de neige exponentiel où les gains dépassent le capital injecté.
-  - Mode **3 Scénarios** : Prudent (-2%), Réaliste, et Optimiste (+2%).
-- **Tableau des Jalons Clés** :
-  - 5 ans (2031), 10 ans (2036), 15 ans (2041), 20 ans (2046), 25 ans (2051), 30 ans (2056).
-  - Montant versé, Gains générés, Valeur totale brute, **Net après fiscalité PEA (17,2% de prélèvements sociaux)**, et **Rente mensuelle passive (règle des 4%)**.
-- **Calculateur Inversé d'Objectif** :
-  - Définissez une cible (ex: 100 000 €, 250 000 €, 500 000 €) et une année cible pour connaître l'effort d'épargne mensuel nécessaire.
+L'application s'ouvre sur http://localhost:3000/.
+Sous Windows : double-clic sur `start.bat`, ou `Ctrl + Shift + B` dans VS Code.
+
+---
+
+## Fonctionnalités
+
+### Mon portefeuille
+- **Chiffres clés** : valeur totale, plus-value latente, rendement annualisé, dividendes estimés, montant investi par rapport au plafond de 150 000 €.
+- **Rendement annualisé** : taux de rendement interne calculé à partir de la date du premier achat de chaque ligne (modifiable dans le tableau). C'est une estimation tant que l'historique complet des opérations n'est pas importé.
+- **Performance de chaque ligne** : plus ou moins-value en % ou en €, avec le rendement annualisé au survol.
+- **Répartition** : poids de chaque ligne et part ETF / actions.
+- **Où placer mon prochain versement ?** : choisis une répartition cible (70 % ETF / 30 % actions, 100 % ETF, priorité dividendes ou ta propre cible ligne par ligne) et l'outil calcule les parts entières à acheter pour t'en rapprocher sans rien vendre. Rappel mensuel téléchargeable (.ics).
+- **Détail des lignes** : PRU, cours, plus-value, rendement annualisé, dividende estimé (rendement modifiable) et date du premier achat.
+
+### Projections
+- Simulation des intérêts composés sur 10, 20 ou 30 ans (versement mensuel, rendement espéré, inflation).
+- Valeur nette après prélèvements sociaux, rente estimée (règle des 4 %).
+- Comparaison avec le Livret A, calculateur d'effort d'épargne pour atteindre un objectif.
+
+### Paramètres
+- **Date du premier versement** sur le PEA : elle fait courir le délai fiscal de 5 ans et sert de date d'achat par défaut pour les nouvelles lignes importées.
+
+---
+
+## Taux réglementaires
+
+Les taux utilisés sont centralisés dans [`src/config/fiscal.ts`](src/config/fiscal.ts) :
+
+| Paramètre | Valeur | En vigueur depuis |
+|---|---|---|
+| Prélèvements sociaux sur les gains du PEA | 18,6 % | janvier 2026 |
+| Flat tax en cas de retrait avant 5 ans | 31,4 % | janvier 2026 |
+| Taux du Livret A | 1,7 % | août 2026 |
+| Plafond des versements PEA | 150 000 € | — |
+
+Pense à les mettre à jour à chaque changement de loi de finances ou de taux du Livret A.
