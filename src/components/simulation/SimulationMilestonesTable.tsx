@@ -69,7 +69,7 @@ export const SimulationMilestonesTable: React.FC<SimulationMilestonesTableProps>
                     <span>Dans {m.years} ans</span>
                   </td>
                   <td className="py-3 font-sans text-white font-bold">
-                    <span className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700/60 text-[11px]">
+                    <span className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700/60 text-xs">
                       {m.targetYear}
                     </span>
                   </td>
@@ -83,7 +83,7 @@ export const SimulationMilestonesTable: React.FC<SimulationMilestonesTableProps>
                     {m.portfolioValue.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €
                   </td>
                   <td className="py-3 text-right text-indigo-300">
-                    <span className="px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-[11px]">
+                    <span className="px-1.5 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-xs">
                       {m.gainsSharePercent} %
                     </span>
                   </td>
@@ -100,7 +100,7 @@ export const SimulationMilestonesTable: React.FC<SimulationMilestonesTableProps>
         </table>
       </div>
 
-      <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400 font-sans">
+      <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 font-sans">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span>Sur PEA : 0 % d'impôt sur le revenu après 5 ans (seuls {PEA_SOCIAL_TAX_RATE.toLocaleString('fr-FR')} % de prélèvements sociaux sont dus sur les gains).</span>

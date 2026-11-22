@@ -1,83 +1,75 @@
 import React from 'react';
-import { TrendingUp, UploadCloud, RefreshCw, SlidersHorizontal } from 'lucide-react';
+import { TrendingUp, UploadCloud, Settings } from 'lucide-react';
 import { PortfolioData } from '../types/portfolio';
+import { TopTabs, TabId } from './Navigation';
 
 interface HeaderProps {
   portfolio: PortfolioData;
+  activeTab: TabId;
+  onTabChange: (tab: TabId) => void;
   onOpenImport: () => void;
   onOpenSettings: () => void;
-  onReset: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   portfolio,
+  activeTab,
+  onTabChange,
   onOpenImport,
   onOpenSettings,
-  onReset
-}) => {
-  return (
-    <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
-        
-        {/* Logo & Titre */}
-        <div className="flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <TrendingUp className="w-5 h-5 text-slate-950 font-bold" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <h1 className="text-lg font-bold text-white tracking-tight">PEA Visualiseur</h1>
-              {portfolio.isDemo && (
-                <span className="px-2 py-0.5 text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25 rounded-full">
-                  Exemple
-                </span>
-              )}
-            </div>
-            <div className="flex items-center space-x-2 text-xs text-slate-400">
-              <span className="font-medium text-slate-300">{portfolio.accountName}</span>
-              {portfolio.accountNumber && (
-                <>
-                  <span>•</span>
-                  {/* Numéro masqué : seuls les 4 derniers chiffres sont affichés */}
-                  <span className="font-mono text-slate-400">N° •••• {portfolio.accountNumber.slice(-4)}</span>
-                </>
-              )}
-              <span>•</span>
-              <span className="text-slate-400">Situation au {portfolio.asOfDate}</span>
-            </div>
-          </div>
+}) => (
+  <header className="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
+
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shrink-0" aria-hidden="true">
+          <TrendingUp className="w-5 h-5 text-slate-950" />
         </div>
-
-        {/* Actions & Paramètres */}
-        <div className="flex items-center space-x-2.5">
-          <button
-            onClick={onOpenSettings}
-            className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white rounded-lg border border-slate-700/60 transition shadow-sm"
-            title="Paramètres du PEA"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Paramètres</span>
-          </button>
-
-          <button
-            onClick={onOpenImport}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-medium text-emerald-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg shadow-md shadow-emerald-500/20 font-semibold transition"
-            title="Importer un fichier Fortuneo"
-          >
-            <UploadCloud className="w-3.5 h-3.5" />
-            <span>Importer export</span>
-          </button>
-
-          <button
-            onClick={onReset}
-            className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition"
-            title="Effacer mes données et revenir à l'exemple"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-          </button>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h1 className="text-base sm:text-lg font-bold text-white tracking-tight whitespace-nowrap">PEA Visualiseur</h1>
+            {portfolio.isDemo && (
+              <span className="hidden sm:inline px-2 py-0.5 text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25 rounded-full">
+                Exemple
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-slate-400 truncate">
+            <span className="hidden sm:inline">{portfolio.accountName}</span>
+            {portfolio.accountNumber && (
+              <span className="hidden md:inline"> · N° •••• {portfolio.accountNumber.slice(-4)}</span>
+            )}
+            <span className="hidden sm:inline"> · Situation au </span>
+            <span className="sm:hidden">Au </span>
+            {portfolio.asOfDate}
+          </p>
         </div>
-
       </div>
-    </header>
-  );
-};
+
+      <div className="flex items-center gap-1.5 shrink-0">
+        <button
+          type="button"
+          onClick={onOpenSettings}
+          className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 text-sm font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-lg transition"
+          aria-label="Paramètres du PEA"
+          title="Paramètres du PEA"
+        >
+          <Settings className="w-4 h-4" aria-hidden="true" />
+          <span className="hidden md:inline">Paramètres</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={onOpenImport}
+          className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-emerald-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition"
+          title="Importer l'export de ton portefeuille Fortuneo"
+        >
+          <UploadCloud className="w-4 h-4" aria-hidden="true" />
+          <span>Importer</span>
+        </button>
+      </div>
+    </div>
+
+    <TopTabs active={activeTab} onChange={onTabChange} />
+  </header>
+);
