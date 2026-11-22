@@ -1,6 +1,6 @@
 import { SimulationParameters, SimulationMilestone, SimulationYearData, GoalCalculationResult } from '../types/simulation';
 
-const CURRENT_YEAR = 2026;
+import { currentYear } from './dates';
 
 /**
  * Calcule la valeur future d'un capital avec versements mensuels
@@ -51,7 +51,7 @@ export function generateSimulationTimeline(params: SimulationParameters): Simula
   const inflationRate = params.inflationRate / 100;
 
   for (let y = 0; y <= maxYears; y++) {
-    const calendarYear = CURRENT_YEAR + y;
+    const calendarYear = currentYear() + y;
     const baseCalc = calculateFutureValue(params.initialCapital, params.monthlyContribution, baseRate, y);
     const optCalc = calculateFutureValue(params.initialCapital, params.monthlyContribution, optimisticRate, y);
     const pessCalc = calculateFutureValue(params.initialCapital, params.monthlyContribution, pessimisticRate, y);
@@ -95,7 +95,7 @@ export function generateSimulationTimeline(params: SimulationParameters): Simula
 export function generateMilestones(params: SimulationParameters): SimulationMilestone[] {
   const milestoneYears = [5, 10, 15, 20, 25, 30, 35, 40].filter(y => y <= Math.max(30, params.durationYears));
   const rate = params.expectedReturnRate;
-  const taxRate = params.socialSecurityTaxRate / 100; // 17.2% sur les gains du PEA
+  const taxRate = params.socialSecurityTaxRate / 100; // prélèvements sociaux sur les gains du PEA
   const swr = params.safeWithdrawalRate / 100; // Règle des 4%
   const inflationRate = params.inflationRate / 100;
 
@@ -111,7 +111,7 @@ export function generateMilestones(params: SimulationParameters): SimulationMile
     const finalGains = Math.max(0, Math.round((finalTotal - finalInvested) * 100) / 100);
 
     // Sur PEA après 5 ans : exonération totale d'impôt sur le revenu !
-    // Seuls les prélèvements sociaux de 17.2% s'appliquent sur les GAINS.
+    // Seuls les prélèvements sociaux s'appliquent sur les GAINS.
     const taxOnGains = gains * taxRate;
     const netValueAfterTaxNominal = total - taxOnGains;
     const finalNetValueAfterTax = Math.round((netValueAfterTaxNominal / inflationFactor) * 100) / 100;
@@ -124,7 +124,7 @@ export function generateMilestones(params: SimulationParameters): SimulationMile
 
     return {
       years: y,
-      targetYear: CURRENT_YEAR + y,
+      targetYear: currentYear() + y,
       totalInvested: finalInvested,
       totalGains: finalGains,
       portfolioValue: finalTotal,
@@ -174,7 +174,7 @@ export function calculateRequiredSavings(
   return {
     targetAmount,
     nominalTargetAmount: adjustForInflation ? effectiveTarget : undefined,
-    targetYear: CURRENT_YEAR + years,
+    targetYear: currentYear() + years,
     years,
     requiredMonthly: roundedMonthly,
     totalInvested,

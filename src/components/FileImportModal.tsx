@@ -19,10 +19,12 @@ interface FileImportModalProps {
   onClose: () => void;
   onImportSuccess: (data: PortfolioData) => void;
   currentPositions?: Position[];
+  /** Date d'achat (AAAA-MM) attribuée par défaut aux lignes nouvelles. */
+  defaultPurchaseDate?: string;
 }
 
-const SAMPLE_CSV = `Portefeuille 010209283616,,,,,,,,,,,
-(PEA M LUTZ MATTHIAS),,,,,,,,,,,
+const SAMPLE_CSV = `Portefeuille 000000000000,,,,,,,,,,,
+(PEA EXEMPLE),,,,,,,,,,,
 08/10/2026,,,,,,,,,,,
 ,,,,,,,,,,,
 Libellé,Cours,,Dev,Var/Veille,Qté,PRU,Valorisation,+/- values,+/- values (%),Poids,ISIN
@@ -37,7 +39,8 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
   isOpen,
   onClose,
   onImportSuccess,
-  currentPositions
+  currentPositions,
+  defaultPurchaseDate
 }) => {
   const [pasteContent, setPasteContent] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -54,7 +57,7 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
     setFileName(file.name);
 
     try {
-      const parsed = await parseFortuneoFile(file, currentPositions);
+      const parsed = await parseFortuneoFile(file, currentPositions, defaultPurchaseDate);
       if (parsed && parsed.positions.length > 0) {
         setParsedPreview(parsed);
       } else {
@@ -100,7 +103,7 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
   const handleProcessText = (text: string) => {
     setErrorMsg(null);
     setFileName('Texte collé');
-    const parsed = parseFortuneoCSV(text, currentPositions);
+    const parsed = parseFortuneoCSV(text, currentPositions, defaultPurchaseDate);
     if (parsed && parsed.positions.length > 0) {
       setParsedPreview(parsed);
     } else {
@@ -278,14 +281,14 @@ export const FileImportModal: React.FC<FileImportModalProps> = ({
                   className="text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1 transition"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Charger l'exemple du 08/10/2026</span>
+                  <span>Charger un exemple</span>
                 </button>
               </div>
 
               <textarea
                 value={pasteContent}
                 onChange={(e) => setPasteContent(e.target.value)}
-                placeholder="Portefeuille 010209283616&#10;(PEA M LUTZ MATTHIAS)&#10;08/10/2026&#10;&#10;Libellé,Cours,,Dev,Var/Veille,Qté,PRU,Valorisation..."
+                placeholder="Portefeuille 000000000000&#10;(PEA EXEMPLE)&#10;08/10/2026&#10;&#10;Libellé,Cours,,Dev,Var/Veille,Qté,PRU,Valorisation..."
                 className="w-full h-24 bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-emerald-500 resize-none"
               />
             </div>

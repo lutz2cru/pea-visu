@@ -1,5 +1,33 @@
 import * as XLSX from 'xlsx';
 import { Position, PortfolioData } from '../types/portfolio';
+import { parseYearMonth } from './dates';
+
+const ETF_PATTERN = /\b(ETF|UCITS|MSCI|ISHARES|VANGUARD|AMUNDI|LYXOR|XTRACKERS|SPDR|BNP PARIBAS EASY)\b/i;
+
+/**
+ * Estimation par défaut de la catégorie et du rendement du dividende d'une ligne,
+ * à partir de son libellé ou de son ticker exact. Les valeurs sont indicatives et modifiables dans l'app.
+ */
+const KNOWN_LINES: Array<{ match: RegExp; tickers: string[]; category: string; dividendYield: number }> = [
+  { match: /S&P ?500/i, tickers: ['ESE', 'PSP5', 'PE500'], category: 'Indice US', dividendYield: 0 },
+  { match: /EMERG/i, tickers: ['PAEEM'], category: 'Marchés émergents', dividendYield: 0 },
+  { match: /\bWORLD\b/i, tickers: ['WPEA', 'CW8', 'EWLD', 'DCAM'], category: 'Indice Monde', dividendYield: 0 },
+  { match: /\bTOTALENERGIES\b/i, tickers: ['TTE'], category: 'Énergie', dividendYield: 5.8 },
+  { match: /\bORANGE\b/i, tickers: ['ORA'], category: 'Télécoms', dividendYield: 5.2 },
+  { match: /\bCREDIT AGRICOLE\b/i, tickers: ['ACA'], category: 'Finance', dividendYield: 6.5 },
+  { match: /\bAIR LIQUIDE\b/i, tickers: ['AI'], category: 'Chimie', dividendYield: 2.2 },
+  { match: /\bAIRBUS\b/i, tickers: ['AIR'], category: 'Industrie & Aéro', dividendYield: 1.2 },
+  { match: /\bSCHNEIDER\b/i, tickers: ['SU'], category: 'Industrie', dividendYield: 2.0 },
+  { match: /\b(LVMH|HERMES|HERMÈS)\b/i, tickers: ['MC', 'RMS'], category: 'Luxe', dividendYield: 1.5 },
+  { match: /\bSANOFI\b/i, tickers: ['SAN'], category: 'Santé', dividendYield: 4.0 }
+];
+
+function guessCategory(label: string, ticker: string, isETF: boolean): { category: string; dividendYield: number } {
+  const known = KNOWN_LINES.find(k => k.match.test(label) || k.tickers.includes(ticker.toUpperCase()));
+  if (known) return { category: known.category, dividendYield: known.dividendYield };
+  // Par défaut : ETF supposé capitalisant, action supposée sans dividende (à compléter dans le tableau).
+  return { category: isETF ? 'ETF' : 'Action', dividendYield: 0 };
+}
 
 /**
  * Nettoie et extrait un nombre à partir d'une cellule (string ou number).
@@ -82,15 +110,20 @@ export function parseExcelBuffer(buffer: ArrayBuffer): any[][] {
  */
 export function parseFortuneoRows(
   rows: any[][],
-  existingPositions?: Position[]
+  existingPositions?: Position[],
+  defaultPurchaseDate?: string
 ): PortfolioData | null {
   try {
     if (!rows || rows.length < 5) return null;
 
     let accountNumber = '';
     let accountName = 'Mon Portefeuille PEA';
-    let asOfDate = new Date().toISOString().split('T')[0];
+    let asOfDate = new Date().toLocaleDateString('fr-FR');
     let cashBalance = 0;
+
+    // Date d'achat attribuée aux lignes inconnues : date du 1er versement si connue, sinon date du jour.
+    const fallbackDate = parseYearMonth(defaultPurchaseDate) || new Date();
+    const defaultPurchase = { year: fallbackDate.getFullYear(), month: fallbackDate.getMonth() + 1 };
 
     // 1. Extraction des métadonnées d'en-tête (5 premières lignes)
     for (let i = 0; i < Math.min(6, rows.length); i++) {
@@ -200,69 +233,15 @@ export function parseFortuneoRows(
       );
 
       // Déduction du type d'actif (ETF vs Action)
-      const isETF = label.toUpperCase().includes('ETF') ||
-                    label.toUpperCase().includes('UCITS') ||
-                    label.toUpperCase().includes('MSCI') ||
-                    label.toUpperCase().includes('ISHARES') ||
-                    label.toUpperCase().includes('VANGUARD') ||
-                    label.toUpperCase().includes('AMUNDI');
+      const isETF = ETF_PATTERN.test(label);
 
-      // Catégorisation et dividendes
-      let category = existing?.category || (isETF ? 'Indice US' : 'Industrie & Aéro');
-      let dividendEstimate = existing?.dividendYieldEstimate !== undefined ? existing.dividendYieldEstimate : 0;
-      let purchaseYear = existing?.purchaseYear || 2024;
-      let purchaseMonth = existing?.purchaseMonth || 7;
-
-      if (!existing) {
-        const upper = label.toUpperCase();
-        if (upper.includes('S&P 500') || upper.includes('ESE')) {
-          category = 'Indice US';
-          dividendEstimate = 0;
-          purchaseMonth = 7;
-        } else if (upper.includes('EMERGENT') || upper.includes('PAEEM')) {
-          category = 'Marchés Émergents';
-          dividendEstimate = 0;
-          purchaseMonth = 10;
-        } else if (upper.includes('TOTAL') || upper.includes('TTE')) {
-          category = 'Énergie';
-          dividendEstimate = 5.8;
-          purchaseMonth = 8;
-        } else if (upper.includes('ORANGE') || upper.includes('ORA')) {
-          category = 'Télécoms';
-          dividendEstimate = 5.2;
-          purchaseMonth = 7;
-        } else if (upper.includes('CREDIT AGRICOLE') || upper.includes('ACA')) {
-          category = 'Finance';
-          dividendEstimate = 6.5;
-          purchaseMonth = 8;
-        } else if (upper.includes('AIRBUS') || upper.includes('AIR')) {
-          category = 'Industrie & Aéro';
-          dividendEstimate = 1.2;
-          purchaseMonth = 9;
-        } else if (upper.includes('WORLD') || upper.includes('WPEA') || upper.includes('CW8')) {
-          category = 'Indice Monde';
-          dividendEstimate = 0;
-          purchaseMonth = 7;
-        } else if (upper.includes('AIR LIQUIDE') || upper.includes('AI')) {
-          category = 'Industrie & Aéro';
-          dividendEstimate = 2.2;
-        } else if (upper.includes('SCHNEIDER') || upper.includes('SU')) {
-          category = 'Industrie & Aéro';
-          dividendEstimate = 2.0;
-        } else if (upper.includes('LVMH') || upper.includes('MC') || upper.includes('HERMES')) {
-          category = 'Luxe & Conso';
-          dividendEstimate = 1.5;
-        } else if (upper.includes('SANOFI') || upper.includes('SAN')) {
-          category = 'Santé';
-          dividendEstimate = 4.0;
-        } else if (isETF) {
-          category = 'Indice US';
-          dividendEstimate = 0;
-        } else {
-          category = 'Industrie & Aéro';
-          dividendEstimate = 2.0;
-        }
-      }
+      // Catégorie et rendement du dividende : on conserve les réglages déjà faits sur cette ligne,
+      // sinon on applique une estimation par défaut (modifiable ensuite dans le tableau).
+      const guess = existing ? null : guessCategory(label, ticker, isETF);
+      const category = existing?.category || guess?.category || 'Autre';
+      const dividendEstimate = existing?.dividendYieldEstimate ?? guess?.dividendYield ?? 0;
+      const purchaseYear = existing?.purchaseYear || defaultPurchase.year;
+      const purchaseMonth = existing?.purchaseMonth || defaultPurchase.month;
 
       positions.push({
         id: `pos-${i}-${ticker}`,
@@ -291,7 +270,7 @@ export function parseFortuneoRows(
       accountName,
       accountNumber,
       asOfDate,
-      startDate: '2024-07',
+      startDate: defaultPurchaseDate || '',
       cashBalance,
       positions
     };
@@ -306,10 +285,11 @@ export function parseFortuneoRows(
  */
 export function parseFortuneoCSV(
   content: string,
-  existingPositions?: Position[]
+  existingPositions?: Position[],
+  defaultPurchaseDate?: string
 ): PortfolioData | null {
   const rows = parseCSVText(content);
-  return parseFortuneoRows(rows, existingPositions);
+  return parseFortuneoRows(rows, existingPositions, defaultPurchaseDate);
 }
 
 /**
@@ -317,10 +297,11 @@ export function parseFortuneoCSV(
  */
 export function parseFortuneoExcel(
   buffer: ArrayBuffer,
-  existingPositions?: Position[]
+  existingPositions?: Position[],
+  defaultPurchaseDate?: string
 ): PortfolioData | null {
   const rows = parseExcelBuffer(buffer);
-  return parseFortuneoRows(rows, existingPositions);
+  return parseFortuneoRows(rows, existingPositions, defaultPurchaseDate);
 }
 
 /**
@@ -329,13 +310,14 @@ export function parseFortuneoExcel(
  */
 export async function parseFortuneoFile(
   file: File,
-  existingPositions?: Position[]
+  existingPositions?: Position[],
+  defaultPurchaseDate?: string
 ): Promise<PortfolioData | null> {
   const isExcel = /\.(xlsx|xls)$/i.test(file.name);
 
   if (isExcel) {
     const buffer = await file.arrayBuffer();
-    return parseFortuneoExcel(buffer, existingPositions);
+    return parseFortuneoExcel(buffer, existingPositions, defaultPurchaseDate);
   }
 
   // Fichier CSV / texte
@@ -346,5 +328,5 @@ export async function parseFortuneoFile(
     text = new TextDecoder('windows-1252').decode(buffer);
   }
 
-  return parseFortuneoCSV(text, existingPositions);
+  return parseFortuneoCSV(text, existingPositions, defaultPurchaseDate);
 }

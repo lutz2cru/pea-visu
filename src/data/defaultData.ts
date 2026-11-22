@@ -1,11 +1,16 @@
 import { PortfolioData } from '../types/portfolio';
 
-export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
-  accountName: 'PEA M LUTZ MATTHIAS',
-  accountNumber: '010209283616',
+/**
+ * Portefeuille d'exemple affiché tant qu'aucun export n'a été importé.
+ * Ne contient aucune donnée d'identification (nom, numéro de compte).
+ */
+export const DEMO_PORTFOLIO_DATA: PortfolioData = {
+  accountName: "Portefeuille d'exemple",
+  accountNumber: '',
   asOfDate: '07/10/2026',
   startDate: '2024-07',
   cashBalance: 0,
+  isDemo: true,
   positions: [
     {
       id: 'ese',

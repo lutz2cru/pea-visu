@@ -12,34 +12,28 @@ export interface Position {
   weight: number;
   currency: string;
   assetType: 'ETF' | 'Action';
-  category: 'Indice US' | 'Marchés Émergents' | 'Industrie & Aéro' | 'Énergie' | 'Télécoms' | 'Finance' | string;
+  category: string;
+  /** Date du premier achat de la ligne (renseignée par l'utilisateur). */
   purchaseYear: number;
   purchaseMonth?: number;
-  dividendYieldEstimate: number; // in %
+  /** Rendement du dividende estimé, en % du cours. 0 pour un ETF capitalisant. */
+  dividendYieldEstimate: number;
 }
 
 export interface PortfolioData {
   accountName: string;
   accountNumber: string;
+  /** Date de l'export (situation du portefeuille). */
   asOfDate: string;
-  startDate: string; // YYYY-MM
+  /** Date du premier versement sur le PEA (AAAA-MM) : point de départ du compteur fiscal de 5 ans. */
+  startDate: string;
   positions: Position[];
   cashBalance: number;
+  /** true tant que l'utilisateur n'a pas importé ses propres données. */
+  isDemo?: boolean;
 }
 
-export interface YearPerformance {
-  year: string;
-  label: string;
-  invested: number;
-  valuation: number;
-  gain: number;
-  gainPercent: number;
-  annualizedReturn: number;
-  dividends: number;
-  benchmarkSAndP500: number;
-  benchmarkCAC40: number;
-  benchmarkMSCIWorld: number;
+/** Clé stable d'une ligne (survit aux ré-imports) : ISIN, sinon ticker, sinon libellé. */
+export function positionKey(p: Pick<Position, 'isin' | 'ticker' | 'label'>): string {
+  return p.isin || p.ticker || p.label;
 }
-
-export type BenchmarkChoice = 'SP500' | 'MSCI_WORLD' | 'CAC40';
-export type InvestmentMode = 'LUMP_SUM_2024' | 'DCA_REGULAR' | 'CUSTOM_PER_LINE';

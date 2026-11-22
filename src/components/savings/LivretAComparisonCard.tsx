@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { calculateFutureValue } from '../../utils/simulation';
+import { currentYear } from '../../utils/dates';
+import { LIVRET_A_RATE, LIVRET_A_SINCE, PEA_SOCIAL_TAX_RATE } from '../../config/fiscal';
 import { Landmark, TrendingUp, AlertCircle, ArrowUpRight, CheckCircle2, ShieldAlert } from 'lucide-react';
 
 interface LivretAComparisonCardProps {
@@ -9,13 +11,13 @@ interface LivretAComparisonCardProps {
 }
 
 export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
-  currentPortfolioValuation = 2453.80,
+  currentPortfolioValuation = 0,
   defaultMonthlyDca = 100,
-  expectedPeaRate = 7.55
+  expectedPeaRate = 7
 }) => {
   const [monthlyDca, setMonthlyDca] = useState<number>(defaultMonthlyDca);
-  const [livretARate, setLivretARate] = useState<number>(2.5); // Taux Livret A (2.5% ou 3.0%)
-  const [peaRate, setPeaRate] = useState<number>(expectedPeaRate);
+  const livretARate = LIVRET_A_RATE;
+  const peaRate = expectedPeaRate;
 
   const initialCapital = currentPortfolioValuation;
 
@@ -25,12 +27,15 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
     const livretCalc = calculateFutureValue(initialCapital, monthlyDca, livretARate, years);
     const peaCalc = calculateFutureValue(initialCapital, monthlyDca, peaRate, years);
 
-    const extraWealth = Math.max(0, peaCalc.total - livretCalc.total);
+    // Le Livret A est net d'impôt ; le PEA (après 5 ans) supporte les prélèvements sociaux sur les gains.
+    const peaNetTotal = peaCalc.total - peaCalc.gains * (PEA_SOCIAL_TAX_RATE / 100);
+    const extraWealth = peaNetTotal - livretCalc.total;
     const extraGains = Math.max(0, peaCalc.gains - livretCalc.gains);
 
     return {
       years,
-      calendarYear: 2026 + years,
+      calendarYear: currentYear() + years,
+      peaNetTotal,
       invested: livretCalc.invested,
       livretTotal: livretCalc.total,
       livretGains: livretCalc.gains,
@@ -108,7 +113,7 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
                 {/* Livret A */}
                 <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Sur Livret A ({livretARate}%)</span>
+                    <span className="text-slate-400 block text-[11px]">Sur Livret A ({livretARate.toLocaleString('fr-FR')} % net, taux depuis {LIVRET_A_SINCE})</span>
                     <span className="font-mono text-slate-300 font-semibold">
                       +{c.livretGains.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € d'intérêts
                     </span>
@@ -121,7 +126,7 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
                 {/* PEA */}
                 <div className="bg-emerald-950/20 p-2.5 rounded-lg border border-emerald-500/30 flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-emerald-400 block text-[11px] font-semibold">Sur votre PEA ({peaRate}%)</span>
+                    <span className="text-emerald-400 block text-[11px] font-semibold">Sur le PEA (hypothèse {peaRate.toLocaleString('fr-FR')} %/an)</span>
                     <span className="font-mono text-emerald-400 font-bold">
                       +{c.peaGains.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € d'intérêts
                     </span>
@@ -136,12 +141,12 @@ export const LivretAComparisonCard: React.FC<LivretAComparisonCardProps> = ({
 
             {/* Badge Bonus PEA */}
             <div className="pt-2 border-t border-slate-800/80 bg-slate-900/60 -mx-4 -mb-4 p-3 text-center">
-              <span className="text-[10px] text-slate-400 block font-medium">Gain supplémentaire sur PEA :</span>
+              <span className="text-[10px] text-slate-400 block font-medium">Écart après prélèvements sociaux du PEA ({PEA_SOCIAL_TAX_RATE.toLocaleString('fr-FR')} %) :</span>
               <span className="font-mono font-extrabold text-emerald-400 text-sm block mt-0.5">
-                +{c.extraWealth.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € nets
+                {c.extraWealth >= 0 ? '+' : ''}{c.extraWealth.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € nets
               </span>
               <span className="text-[10px] text-slate-500 block">
-                {(c.peaTotal / (c.livretTotal || 1)).toFixed(1)}x plus de capital accumulé
+                PEA net : {c.peaNetTotal.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} € (hypothèse de rendement, non garantie)
               </span>
             </div>
 
