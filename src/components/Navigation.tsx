@@ -1,12 +1,13 @@
 import React from 'react';
-import { Home, List, PiggyBank, TrendingUp } from 'lucide-react';
+import { Home, List, Coins, PiggyBank, TrendingUp } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-export type TabId = 'OVERVIEW' | 'LINES' | 'INVEST' | 'PROJECTIONS';
+export type TabId = 'OVERVIEW' | 'LINES' | 'DIVIDENDS' | 'INVEST' | 'PROJECTIONS';
 
 export const TABS: Array<{ id: TabId; label: string; shortLabel: string; icon: LucideIcon }> = [
   { id: 'OVERVIEW', label: "Vue d'ensemble", shortLabel: 'Accueil', icon: Home },
   { id: 'LINES', label: 'Mes lignes', shortLabel: 'Lignes', icon: List },
+  { id: 'DIVIDENDS', label: 'Dividendes', shortLabel: 'Dividendes', icon: Coins },
   { id: 'INVEST', label: 'Prochain versement', shortLabel: 'Investir', icon: PiggyBank },
   { id: 'PROJECTIONS', label: 'Projections', shortLabel: 'Projections', icon: TrendingUp }
 ];
@@ -47,7 +48,7 @@ export const BottomNav: React.FC<NavigationProps> = ({ active, onChange }) => (
     aria-label="Sections"
     className="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-slate-950/95 backdrop-blur border-t border-slate-800 pb-[env(safe-area-inset-bottom)]"
   >
-    <div className="grid grid-cols-4">
+    <div className="grid grid-cols-5">
       {TABS.map(({ id, shortLabel, icon: Icon }) => {
         const selected = active === id;
         return (
@@ -56,7 +57,7 @@ export const BottomNav: React.FC<NavigationProps> = ({ active, onChange }) => (
             type="button"
             onClick={() => onChange(id)}
             aria-current={selected ? 'page' : undefined}
-            className={`flex flex-col items-center gap-0.5 py-2.5 text-xs font-medium transition ${
+            className={`flex flex-col items-center gap-0.5 py-2.5 text-[0.75rem] leading-tight font-medium transition ${
               selected ? 'text-emerald-300' : 'text-slate-400'
             }`}
           >

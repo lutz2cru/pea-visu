@@ -39,6 +39,10 @@ export const GLOSSARY = {
     title: 'PRU (prix de revient unitaire)',
     text: "Prix moyen payé pour une part, frais d'achat généralement inclus. Si tu as acheté en plusieurs fois, c'est la moyenne de tes achats."
   },
+  dateAchat: {
+    title: "Date d'achat",
+    text: "Date à laquelle tu as acheté cette ligne. Si tu l'as achetée en plusieurs fois, indique une date moyenne (pondérée par les montants). Elle sert au rendement par an et à la comparaison avec un ETF : plus elle est juste, plus ces chiffres sont fiables."
+  },
   poids: {
     title: 'Poids',
     text: 'Part que représente une ligne dans la valeur totale de ton PEA.'

@@ -12,6 +12,8 @@ interface SummaryHeroProps {
   summary: PortfolioSummary;
   /** Date du premier versement (AAAA-MM). */
   peaStartDate: string;
+  /** Dividendes annuels estimés, nets des retenues étrangères. */
+  netAnnualDividends: number;
 }
 
 const Stat: React.FC<{ label: string; term: GlossaryKey; value: React.ReactNode; hint?: React.ReactNode; valueClassName?: string }> = ({
@@ -30,7 +32,7 @@ const Stat: React.FC<{ label: string; term: GlossaryKey; value: React.ReactNode;
   </div>
 );
 
-export const SummaryHero: React.FC<SummaryHeroProps> = ({ summary, peaStartDate }) => {
+export const SummaryHero: React.FC<SummaryHeroProps> = ({ summary, peaStartDate, netAnnualDividends }) => {
   const total = summary.totalValuation + summary.cashBalance;
   const gain = summary.totalGain;
   const isGain = gain >= 0;
@@ -78,9 +80,9 @@ export const SummaryHero: React.FC<SummaryHeroProps> = ({ summary, peaStartDate 
         <Stat
           label="Dividendes / an"
           term="dividende"
-          value={`≈ ${formatEuro(summary.estimatedAnnualDividends, { decimals: 0 })}`}
+          value={`≈ ${formatEuro(netAnnualDividends, { decimals: 0 })}`}
           valueClassName="text-amber-300"
-          hint={`estimation, soit ${formatPercent(summary.estimatedDividendYield)} de la valeur`}
+          hint={`estimation nette, soit ${formatPercent(summary.totalValuation > 0 ? netAnnualDividends / summary.totalValuation : 0)} de la valeur`}
         />
         <Stat
           label={`${PEA_TAX_FREE_YEARS} ans fiscaux`}

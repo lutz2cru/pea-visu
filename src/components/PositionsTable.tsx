@@ -63,7 +63,7 @@ const PurchaseDateEditor: React.FC<EditorProps> = ({ pos, onUpdatePosition }) =>
       if (y && m) onUpdatePosition(pos.id, { purchaseYear: y, purchaseMonth: m });
     }}
     className="bg-slate-800 text-slate-100 text-sm px-2 py-1 rounded-md border border-slate-600 focus:outline-none focus:border-emerald-400 [color-scheme:dark]"
-    aria-label={`Date du premier achat de ${pos.label}`}
+    aria-label={`Date d'achat (moyenne si plusieurs achats) de ${pos.label}`}
   />
 );
 
@@ -102,7 +102,7 @@ export const PositionsTable: React.FC<PositionsTableProps> = ({ performances, to
       subtitle={
         <span className="inline-flex items-start gap-1.5">
           <Pencil className="w-3.5 h-3.5 mt-0.5 shrink-0 text-indigo-300" aria-hidden="true" />
-          <span>Tu peux modifier le <strong className="text-slate-200">rendement du dividende</strong> et la <strong className="text-slate-200">date du 1er achat</strong> : ils servent aux estimations de dividendes et de rendement par an.</span>
+          <span>Tu peux modifier le <strong className="text-slate-200">rendement du dividende</strong> et la <strong className="text-slate-200">date d'achat</strong> (date moyenne si tu as acheté en plusieurs fois) : ils servent aux estimations de dividendes, de rendement par an et à la comparaison avec un ETF.</span>
         </span>
       }
     >
@@ -139,7 +139,7 @@ export const PositionsTable: React.FC<PositionsTableProps> = ({ performances, to
                 <DividendEditor pos={pos} onUpdatePosition={onUpdatePosition} estimatedAnnualDividend={estimatedAnnualDividend} />
               </div>
               <div>
-                <div className="text-xs text-slate-400 mb-1">1er achat</div>
+                <div className="text-xs text-slate-400 mb-1 flex items-center gap-1">Date d'achat <InfoTip term="dateAchat" /></div>
                 <PurchaseDateEditor pos={pos} onUpdatePosition={onUpdatePosition} />
               </div>
             </div>
@@ -161,7 +161,7 @@ export const PositionsTable: React.FC<PositionsTableProps> = ({ performances, to
               <th className="py-2.5 px-2 font-medium text-right"><span className="inline-flex items-center gap-1">Gain <InfoTip term="plusValue" /></span></th>
               <th className="py-2.5 px-2 font-medium text-right"><span className="inline-flex items-center gap-1">Par an <InfoTip term="rendementAnnuel" /></span></th>
               <th className="py-2.5 px-2 font-medium"><span className="inline-flex items-center gap-1">Dividende <InfoTip term="dividende" /></span></th>
-              <th className="py-2.5 pl-2 font-medium">1er achat</th>
+              <th className="py-2.5 pl-2 font-medium"><span className="inline-flex items-center gap-1">Date d'achat <InfoTip term="dateAchat" /></span></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/70">

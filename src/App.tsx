@@ -11,7 +11,11 @@ import { DEMO_PORTFOLIO_DATA } from './data/defaultData';
 import { PortfolioData, Position } from './types/portfolio';
 import { computePortfolioSummary } from './utils/calculations';
 import { computeDcaPlan, StrategyType } from './utils/dca';
+import { computeDividends, computeExposure, computeInsights } from './utils/analysis';
 import { usePersistentState } from './hooks/usePersistentState';
+import { useBenchmarks } from './hooks/useBenchmarks';
+import { DividendsView } from './components/dividends/DividendsView';
+import { ExposureCard } from './components/analysis/ExposureCard';
 import { Info, UploadCloud } from 'lucide-react';
 
 const STORAGE_KEY = 'pea_portfolio_data';
@@ -59,6 +63,11 @@ export const App: React.FC = () => {
     () => computeDcaPlan(portfolio.positions, dcaStrategy, dcaBudget, customTargets),
     [portfolio.positions, dcaStrategy, dcaBudget, customTargets]
   );
+
+  const exposure = useMemo(() => computeExposure(summary), [summary]);
+  const insights = useMemo(() => computeInsights(summary, exposure, portfolio.startDate), [summary, exposure, portfolio.startDate]);
+  const dividends = useMemo(() => computeDividends(summary.performances), [summary]);
+  const { data: benchmarks, status: benchmarkStatus } = useBenchmarks();
 
   // Onglet inconnu (ancienne version mémorisée) : retour à l'accueil
   const tab: TabId = TABS.some(t => t.id === activeTab) ? activeTab : 'OVERVIEW';
@@ -122,17 +131,28 @@ export const App: React.FC = () => {
             plan={plan}
             budget={dcaBudget}
             strategy={dcaStrategy}
+            insights={insights}
+            netAnnualDividends={dividends.totalNet}
+            benchmarks={benchmarks}
+            benchmarkStatus={benchmarkStatus}
             onGoToLines={() => goTo('LINES')}
             onGoToInvest={() => goTo('INVEST')}
           />
         )}
 
         {tab === 'LINES' && (
-          <PositionsTable
-            performances={summary.performances}
-            totalValuation={summary.totalValuation}
-            onUpdatePosition={handleUpdatePosition}
-          />
+          <>
+            <PositionsTable
+              performances={summary.performances}
+              totalValuation={summary.totalValuation}
+              onUpdatePosition={handleUpdatePosition}
+            />
+            <ExposureCard exposure={exposure} />
+          </>
+        )}
+
+        {tab === 'DIVIDENDS' && (
+          <DividendsView dividends={dividends} onGoToInvest={() => goTo('INVEST')} />
         )}
 
         {tab === 'INVEST' && (
